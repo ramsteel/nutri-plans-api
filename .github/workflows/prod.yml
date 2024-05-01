@@ -1,0 +1,12 @@
+name: Production CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  checkout:
+    name: Checkout repository
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
