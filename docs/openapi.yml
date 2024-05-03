@@ -1,0 +1,248 @@
+openapi: '3.0.2'
+info:
+  title: NutriPlans API
+  version: '0.0.0'
+  description: This API provides functionalities to manage and track your daily nutritional intake.
+servers:
+  - url: http://localhost:8080
+    description: development server
+tags:
+  - name: users
+    description: Authentication and user management
+
+paths:
+  /register:
+    post:
+      tags:
+        - users
+      summary: Register
+      description: Register a new user
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: user created successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              examples:
+                mismatched data type:
+                  value:
+                    status: failed
+                    message: mismatched data type
+                invalid request data:
+                  value:
+                    status: failed
+                    message: invalid request data
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: country not found
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: username already exist
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              examples:
+                failed create user:
+                  value:
+                    status: failed
+                    message: failed to create user
+                failed hashing password:
+                  value:
+                    status: failed
+                    message: failed hashing password
+components:
+  schemas:
+    Country:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the country
+        name:
+          type: string
+          description: The name of the country
+        created_at:
+          type: string
+          format: date-time
+          description: The created at of the country
+        updated_at:
+          type: string
+          format: date-time
+          description: The updated at of the country
+        deleted_at:
+          type: string
+          format: date-time
+          description: The deleted at of the country
+    RoleType:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the role type
+        name:
+          type: string
+          description: The name of the role type
+        created_at:
+          type: string
+          format: date-time
+          description: The created at of the role type
+        updated_at:
+          type: string
+          format: date-time
+          description: The updated at of the role type
+        deleted_at:
+          type: string
+          format: date-time
+          description: The deleted at of the role type
+    Auth:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The ID of the auth (UUID)
+        email:
+          type: string
+          description: The email of the auth
+        password:
+          type: string
+          description: The password of the auth
+        username:
+          type: string
+          description: The username of the auth
+        role_type:
+          $ref: '#/components/schemas/RoleType'
+          description: The role type of the auth
+        created_at:
+          type: string
+          format: date-time
+          description: The created at of the auth
+        updated_at:
+          type: string
+          format: date-time
+          description: The updated at of the auth
+        deleted_at:
+          type: string
+          format: date-time
+          description: The deleted at of the auth
+    User:
+      type: object
+      properties:
+        auth:
+          $ref: '#/components/schemas/Auth'
+          description: The auth of the user
+        first_name:
+          type: string
+          description: The first name of the user
+        last_name:
+          type: string
+          description: The last name of the user
+        dob:
+          type: string
+          format: date
+          description: The date of birth of the user
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          description: The gender of the user
+        country:
+          $ref: '#/components/schemas/Country'
+          description: The country of the user
+        created_at:
+          type: string
+          format: date-time
+          description: The created at of the user
+        updated_at:
+          type: string
+          format: date-time
+          description: The updated at of the user
+        deleted_at:
+          type: string
+          format: date-time
+          description: The deleted at of the user
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email of the user
+          example: test@example.com
+        password:
+          type: string
+          description: The password of the user
+          example: password
+        username:
+          type: string
+          description: The username of the user
+          example: testuser
+        first_name:
+          type: string
+          description: The first name of the user
+          example: John
+        last_name:
+          type: string
+          description: The last name of the user
+          example: Doe
+        dob:
+          type: string
+          format: date-time
+          description: The date of birth of the user
+          example: 2001-01-01T00:00:00Z
+        gender:
+          type: string
+          enum:
+            - M
+            - F
+          description: The gender of the user
+          example: M
+        country_id:
+          type: integer
+          description: The ID of the country
+          example: 1
+    BaseResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the response
+        message:
+          type: string
+          description: The message of the response
+        data:
+          type: object
+          description: The data of the response
+      required:
+        - status
+        - message
