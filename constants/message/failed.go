@@ -6,11 +6,11 @@ const (
 
 	// password
 	MsgFailedHashingPassword = "failed hashing password"
+	MsgPasswordMismatch      = "password mismatch"
 
 	// request
 	MsgMismatchedDataType = "mismatched data type"
 	MsgInvalidRequestData = "invalid request data"
-	MsgFailedParseDate    = "failed to parse date"
 
 	// database
 	MsgFailedConnectDB = "failed connect to database"
@@ -20,4 +20,9 @@ const (
 	MsgUserCreationFailed = "failed to create user"
 	MsgCountryNotFound    = "country not found"
 	MsgUserExist          = "username or email already exist"
+	MsgLoginFailed        = "failed to login"
+	MsgUnregisteredEmail  = "unregistered email"
+
+	// token
+	MsgFailedGeneratingToken = "failed generating token"
 )

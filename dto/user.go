@@ -12,3 +12,12 @@ type RegisterRequest struct {
 	Gender    string    `json:"gender" validate:"required,oneof=M F"`
 	CountryID uint      `json:"country_id" validate:"required,min=1"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
+}

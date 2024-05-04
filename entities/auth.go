@@ -9,9 +9,9 @@ import (
 
 type Auth struct {
 	ID         uuid.UUID      `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Email      string         `json:"email" gorm:"type:varchar;unique"`
-	Password   string         `json:"-" gorm:"type:varchar"`
-	Username   string         `json:"username" gorm:"type:varchar;unique"`
+	Email      string         `json:"email" gorm:"type:varchar(255);unique"`
+	Password   string         `json:"-" gorm:"type:varchar;size(255)"`
+	Username   string         `json:"username" gorm:"type:varchar(255);unique"`
 	RoleTypeID uint           `json:"-" gorm:"type:uint;default:1"`
 	RoleType   RoleType       `json:"role_type"`
 	CreatedAt  time.Time      `json:"created_at"`

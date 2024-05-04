@@ -9,6 +9,7 @@ import (
 
 type AuthRepository interface {
 	CreateAuth(ctx context.Context, auth *entities.Auth) error
+	GetAuthByEmail(ctx context.Context, email string) (*entities.Auth, error)
 }
 
 type authRepository struct {
@@ -27,4 +28,17 @@ func (a *authRepository) CreateAuth(ctx context.Context, auth *entities.Auth) er
 	}
 
 	return a.db.Create(auth).Error
+}
+
+func (a *authRepository) GetAuthByEmail(ctx context.Context, email string) (*entities.Auth, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	auth := new(entities.Auth)
+	if err := a.db.Where("email = ?", email).First(auth).Error; err != nil {
+		return nil, err
+	}
+
+	return auth, nil
 }
