@@ -6,5 +6,10 @@ import (
 )
 
 var (
+	// password
 	ErrFailedHashingPassword = errors.New(msgconst.MsgFailedHashingPassword)
+	ErrPasswordMismatch      = errors.New(msgconst.MsgPasswordMismatch)
+
+	// token
+	ErrFailedGeneratingToken = errors.New(msgconst.MsgFailedGeneratingToken)
 )

@@ -1,6 +1,7 @@
 package password
 
 import (
+	"fmt"
 	errutil "nutri-plans-api/utils/error"
 
 	"golang.org/x/crypto/bcrypt"
@@ -8,6 +9,7 @@ import (
 
 type PasswordUtil interface {
 	HashPassword(password string) (string, error)
+	VerifyPassword(password, hash string) error
 }
 
 type passwordUtil struct{}
@@ -23,4 +25,14 @@ func (*passwordUtil) HashPassword(password string) (string, error) {
 	}
 
 	return string(bytes), nil
+}
+
+func (*passwordUtil) VerifyPassword(password, hash string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	fmt.Println(err)
+	if err != nil {
+		return errutil.ErrPasswordMismatch
+	}
+
+	return nil
 }
