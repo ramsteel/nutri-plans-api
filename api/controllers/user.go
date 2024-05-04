@@ -125,3 +125,52 @@ func (u *userController) Login(c echo.Context) error {
 
 	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgLoginSuccess, res)
 }
+
+func (u *userController) Login(c echo.Context) error {
+	req := new(dto.LoginRequest)
+	if err := c.Bind(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
+	}
+
+	if err := u.validator.Validate(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	res, err := u.userUsecase.Login(c, req)
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgLoginFailed
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgUnregisteredEmail
+		case errors.Is(err, errutil.ErrPasswordMismatch):
+			code = http.StatusUnauthorized
+			msg = msgconst.MsgPasswordMismatch
+		case errors.Is(err, errutil.ErrFailedGeneratingToken):
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgFailedGeneratingToken
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgLoginFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgLoginSuccess, res)
+}
