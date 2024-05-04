@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"nutri-plans-api/dto"
 	"nutri-plans-api/entities"
@@ -126,6 +127,90 @@ func TestRegister(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestLogin(t *testing.T) {
+	var (
+		loginRequest = &dto.LoginRequest{
+			Email:    "some@example.com",
+			Password: "password",
+		}
+
+		auth = &entities.Auth{
+			Email:      loginRequest.Email,
+			Password:   "hashedpasswordinhere",
+			Username:   "testuser",
+			RoleTypeID: uint(1),
+			CreatedAt:  time.UnixMilli(1714757476909),
+			UpdatedAt:  time.UnixMilli(1714757476909),
+			DeletedAt:  gorm.DeletedAt{},
+		}
+
+		token = "jwttoken"
+
+		loginResponse = &dto.LoginResponse{
+			Token: token,
+		}
+	)
+
+	testCases := []testCase{
+		{
+			name: "success",
+			errs: []error{nil, nil, nil},
+		},
+		{
+			name: "error get auth",
+			errs: []error{errors.New("failed to get auth"), nil, nil},
+		},
+		{
+			name: "error verify password",
+			errs: []error{nil, errors.New("failed to verify password"), nil},
+		},
+		{
+			name: "error generate token",
+			errs: []error{nil, nil, errors.New("failed to generate token")},
+		},
+	}
+
+	for idx, tc := range testCases {
+		mockUserRepo := new(mockrepo.MockUserRepository)
+		mockAuthRepo := new(mockrepo.MockAuthRepository)
+		mockCountryRepo := new(mockrepo.MockCountryRepository)
+		mockPassUtil := new(mockpass.MockPasswordUtil)
+		mockTokenUtil := new(mocktoken.MockTokenUtil)
+		u := usecases.NewUserUsecase(
+			mockUserRepo,
+			mockAuthRepo,
+			mockCountryRepo,
+			mockPassUtil,
+			mockTokenUtil,
+		)
+		t.Run(tc.name, func(t *testing.T) {
+			e := echo.New()
+			req := httptest.NewRequest(http.MethodPost, "/login", nil)
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			ctx, cancel := context.WithCancel(c.Request().Context())
+			defer cancel()
+			mockAuthRepo.On("GetAuthByEmail", ctx, loginRequest.Email).Return(auth, tc.errs[0])
+			mockPassUtil.On("VerifyPassword", loginRequest.Password, auth.Password).Return(
+				tc.errs[1],
+			)
+			mockTokenUtil.On("GenerateToken", auth.ID, auth.RoleTypeID).Return(
+				loginResponse.Token,
+				tc.errs[2],
+			)
+
+			_, err := u.Login(c, loginRequest)
+			if idx != 0 {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, token, loginResponse.Token)
 			}
 		})
 	}
