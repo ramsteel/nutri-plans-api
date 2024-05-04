@@ -7,11 +7,13 @@ import (
 	msgconst "nutri-plans-api/constants/message"
 	"nutri-plans-api/entities"
 	countryutil "nutri-plans-api/utils/country"
+	loggerutil "nutri-plans-api/utils/logger"
 	roleutil "nutri-plans-api/utils/role"
 	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func NewDatabase() *gorm.DB {
@@ -19,13 +21,14 @@ func NewDatabase() *gorm.DB {
 	var err error
 
 	var (
-		DB_HOST     = os.Getenv("DB_HOST")
-		DB_USER     = os.Getenv("DB_USER")
-		DB_PASSWORD = os.Getenv("DB_PASSWORD")
-		DB_NAME     = os.Getenv("DB_NAME")
-		DB_PORT     = os.Getenv("DB_PORT")
-		DB_SSL      = os.Getenv("DB_SSL")
-		DB_TZ       = os.Getenv("DB_TZ")
+		DB_HOST      = os.Getenv("DB_HOST")
+		DB_USER      = os.Getenv("DB_USER")
+		DB_PASSWORD  = os.Getenv("DB_PASSWORD")
+		DB_NAME      = os.Getenv("DB_NAME")
+		DB_PORT      = os.Getenv("DB_PORT")
+		DB_SSL       = os.Getenv("DB_SSL")
+		DB_TZ        = os.Getenv("DB_TZ")
+		DB_LOG_LEVEL = os.Getenv("DB_LOG_LEVEL")
 	)
 
 	dsn := fmt.Sprintf(
@@ -39,7 +42,20 @@ func NewDatabase() *gorm.DB {
 		DB_TZ,
 	)
 
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{TranslateError: true})
+	logLevel := loggerutil.GetDBLogLevel(DB_LOG_LEVEL)
+	logger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			LogLevel:             logLevel,
+			ParameterizedQueries: true,
+			Colorful:             false,
+		},
+	)
+
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		TranslateError: true,
+		Logger:         logger,
+	})
 	if err != nil {
 		log.Fatal(msgconst.MsgFailedConnectDB)
 	}
