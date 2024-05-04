@@ -81,6 +81,64 @@ paths:
                   value:
                     status: failed
                     message: failed hashing password
+  /login:
+    post:
+      tags:
+        - users
+      summary: Login
+      description: Login a user
+      operationId: login
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: user logged in successfully
+                data:
+                  token: jwttoken
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: password mismatched
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: unregistered email
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              examples:
+                login failed:
+                  value:
+                    status: failed
+                    message: failed to login
+                failed generating token:
+                  value:
+                    status: failed
+                    message: failed generating token
+
 components:
   schemas:
     Country:
@@ -246,3 +304,34 @@ components:
       required:
         - status
         - message
+  requestBodies:
+    LoginRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email of the user
+                example: test@example.com
+              password:
+                type: string
+                description: The password of the user
+                example: password
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          examples:
+            invalid request data:
+              value:
+                status: failed
+                message: invalid request data
+            mismatched data type:
+              value:
+                status: failed
+                message: mismatched data type
