@@ -37,6 +37,24 @@ func (_m *MockPasswordUtil) HashPassword(_a0 string) (string, error) {
 	return r0, r1
 }
 
+// VerifyPassword provides a mock function with given fields: _a0, hash
+func (_m *MockPasswordUtil) VerifyPassword(_a0 string, hash string) error {
+	ret := _m.Called(_a0, hash)
+
+	if len(ret) == 0 {
+		panic("no return value specified for VerifyPassword")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(_a0, hash)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // NewMockPasswordUtil creates a new instance of MockPasswordUtil. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockPasswordUtil(t interface {

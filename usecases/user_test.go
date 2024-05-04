@@ -3,7 +3,6 @@ package usecases_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,31 +16,13 @@ import (
 	"nutri-plans-api/entities"
 	mockrepo "nutri-plans-api/mocks/repositories"
 	mockpass "nutri-plans-api/mocks/utils/password"
+	mocktoken "nutri-plans-api/mocks/utils/token"
 	"nutri-plans-api/usecases"
 )
 
 type testCase struct {
 	name string
 	errs []error
-}
-
-var testCases = []testCase{
-	{
-		name: "success",
-		errs: []error{nil, nil, nil},
-	},
-	{
-		name: "error get country",
-		errs: []error{errors.New("country not found"), nil, nil},
-	},
-	{
-		name: "error hash password",
-		errs: []error{nil, errors.New("failed hashing password"), nil},
-	},
-	{
-		name: "error create auth",
-		errs: []error{nil, nil, errors.New("failed to create auth")},
-	},
 }
 
 func TestNewUserUsecase(t *testing.T) {
@@ -52,6 +33,7 @@ func TestNewUserUsecase(t *testing.T) {
 			mockrepo.NewMockAuthRepository(t),
 			mockrepo.NewMockCountryRepository(t),
 			mockpass.NewMockPasswordUtil(t),
+			mocktoken.NewMockTokenUtil(t),
 		),
 	)
 }
@@ -91,12 +73,38 @@ func TestRegister(t *testing.T) {
 		}
 	)
 
+	testCases := []testCase{
+		{
+			name: "success",
+			errs: []error{nil, nil, nil},
+		},
+		{
+			name: "error get country",
+			errs: []error{errors.New("country not found"), nil, nil},
+		},
+		{
+			name: "error hash password",
+			errs: []error{nil, errors.New("failed hashing password"), nil},
+		},
+		{
+			name: "error create auth",
+			errs: []error{nil, nil, errors.New("failed to create auth")},
+		},
+	}
+
 	for idx, tc := range testCases {
 		mockUserRepo := new(mockrepo.MockUserRepository)
 		mockAuthRepo := new(mockrepo.MockAuthRepository)
 		mockCountryRepo := new(mockrepo.MockCountryRepository)
 		mockPassUtil := new(mockpass.MockPasswordUtil)
-		u := usecases.NewUserUsecase(mockUserRepo, mockAuthRepo, mockCountryRepo, mockPassUtil)
+		mockTokenUtil := new(mocktoken.MockTokenUtil)
+		u := usecases.NewUserUsecase(
+			mockUserRepo,
+			mockAuthRepo,
+			mockCountryRepo,
+			mockPassUtil,
+			mockTokenUtil,
+		)
 		t.Run(tc.name, func(t *testing.T) {
 			e := echo.New()
 			req := httptest.NewRequest(http.MethodPost, "/register", nil)
@@ -113,7 +121,6 @@ func TestRegister(t *testing.T) {
 			mockAuthRepo.On("CreateAuth", ctx, auth).Return(tc.errs[2])
 			mockUserRepo.On("CreateUser", ctx, user).Return(nil)
 			err := u.Register(c, registerRequest)
-			fmt.Println(tc.errs[1])
 
 			if idx != 0 {
 				assert.Error(t, err)

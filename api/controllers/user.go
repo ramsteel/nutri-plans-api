@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 	msgconst "nutri-plans-api/constants/message"
-	statusconst "nutri-plans-api/constants/status"
 	"nutri-plans-api/dto"
 	"nutri-plans-api/usecases"
 	errutil "nutri-plans-api/utils/error"
@@ -33,53 +32,49 @@ func NewUserController(userUsecase usecases.UserUsecase, v *valutil.Validator) *
 func (u *userController) Register(c echo.Context) error {
 	req := new(dto.RegisterRequest)
 	if err := c.Bind(req); err != nil {
-		return c.JSON(http.StatusBadRequest, &dto.BaseResponse{
-			Status:  statusconst.StatusFailed,
-			Message: msgconst.MsgMismatchedDataType,
-		})
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
 	}
 
 	if err := u.validator.Validate(req); err != nil {
-		return c.JSON(http.StatusBadRequest, &dto.BaseResponse{
-			Status:  statusconst.StatusFailed,
-			Message: msgconst.MsgInvalidRequestData,
-		})
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
 	}
 
 	if err := u.userUsecase.Register(c, req); err != nil {
+		var (
+			code int
+			msg  string
+		)
+
 		switch {
 		case errors.Is(err, context.Canceled):
-			return c.JSON(httpconst.StatusClientCancelledRequest, &dto.BaseResponse{
-				Status:  statusconst.StatusFailed,
-				Message: msgconst.MsgUserCreationFailed,
-			})
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgUserCreationFailed
 		case errors.Is(err, gorm.ErrRecordNotFound):
-			return c.JSON(http.StatusNotFound, &dto.BaseResponse{
-				Status:  statusconst.StatusFailed,
-				Message: msgconst.MsgCountryNotFound,
-			})
+			code = http.StatusNotFound
+			msg = msgconst.MsgCountryNotFound
 		case errors.Is(err, errutil.ErrFailedHashingPassword):
-			return c.JSON(http.StatusInternalServerError, &dto.BaseResponse{
-				Status:  statusconst.StatusFailed,
-				Message: msgconst.MsgFailedHashingPassword,
-			})
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgFailedHashingPassword
 		case errors.Is(err, gorm.ErrDuplicatedKey):
-			return c.JSON(http.StatusConflict, &dto.BaseResponse{
-				Status:  statusconst.StatusFailed,
-				Message: msgconst.MsgUserExist,
-			})
+			code = http.StatusConflict
+			msg = msgconst.MsgUserExist
 		default:
-			return c.JSON(http.StatusInternalServerError, &dto.BaseResponse{
-				Status:  statusconst.StatusFailed,
-				Message: msgconst.MsgUserCreationFailed,
-			})
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgUserCreationFailed
 		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
 	}
 
-	return c.JSON(http.StatusOK, &dto.BaseResponse{
-		Status:  statusconst.StatusSuccess,
-		Message: msgconst.SuccessUserCreated,
-	})
+	return httputil.HandleSuccessResponse(c, http.StatusCreated, msgconst.MsgUserCreated, nil)
 }
 
 func (u *userController) Login(c echo.Context) error {
