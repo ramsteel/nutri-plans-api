@@ -1,0 +1,8 @@
+with-expecter: false
+all: true
+dir: 'mocks/{{.InterfaceDirRelative}}'
+filename: 'mock_{{.InterfaceName|snakecase}}.go'
+mockname: 'Mock{{.InterfaceName}}'
+packages:
+  nutri-plans-api/repositories:
+  nutri-plans-api/utils/password:
