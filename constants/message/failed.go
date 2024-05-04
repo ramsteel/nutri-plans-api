@@ -19,5 +19,5 @@ const (
 	// users
 	MsgUserCreationFailed = "failed to create user"
 	MsgCountryNotFound    = "country not found"
-	MsgUsernameExist      = "username already exist"
+	MsgUserExist          = "username or email already exist"
 )

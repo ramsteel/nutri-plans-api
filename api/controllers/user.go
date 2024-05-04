@@ -65,7 +65,7 @@ func (u *userController) Register(c echo.Context) error {
 		case errors.Is(err, gorm.ErrDuplicatedKey):
 			return c.JSON(http.StatusConflict, &dto.BaseResponse{
 				Status:  statusconst.StatusFailed,
-				Message: msgconst.MsgUsernameExist,
+				Message: msgconst.MsgUserExist,
 			})
 		default:
 			return c.JSON(http.StatusInternalServerError, &dto.BaseResponse{
