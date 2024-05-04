@@ -1,9 +1,9 @@
 package main
 
 import (
-	"nutri-plans-api/api/middlewares"
 	"nutri-plans-api/api/routes"
 	"nutri-plans-api/bootstraps"
+	logutil "nutri-plans-api/utils/logger"
 	valutil "nutri-plans-api/utils/validation"
 
 	"github.com/joho/godotenv"
@@ -25,7 +25,7 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
-	e.Use(middleware.LoggerWithConfig(*middlewares.GetLoggerConfig()))
+	e.Use(middleware.LoggerWithConfig(*logutil.GetLoggerConfig()))
 
 	routes.Init(e, db, v)
 
