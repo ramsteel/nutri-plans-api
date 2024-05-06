@@ -13,4 +13,7 @@ const (
 
 	// country
 	MsgRetrieveCountrySuccess = "country retreived successfully"
+
+	// food types
+	MsgRetrieveFoodTypesSuccess = "food types retreived successfully"
 )
