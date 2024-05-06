@@ -38,4 +38,13 @@ const (
 	// country
 	MsgCountryNotFound    = "country not found"
 	MsgGetCountriesFailed = "failed to get countries"
+
+	// food types
+	MsgGetFoodTypesFailed = "failed to get food types"
+
+	// drink types
+	MsgGetDrinkTypesFailed = "failed to get drink types"
+
+	// dietary preference types
+	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
 )
