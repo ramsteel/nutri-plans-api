@@ -8,16 +8,12 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 )
-
-type JWTClaim struct {
-	UID    uuid.UUID `json:"uid"`
-	RoleID uint      `json:"role_id"`
-	jwt.RegisteredClaims
-}
 
 type TokenUtil interface {
 	GenerateToken(uid uuid.UUID, roleID uint) (string, error)
+	GetClaims(c echo.Context) *JWTClaim
 }
 
 type tokenUtil struct{}
@@ -25,7 +21,6 @@ type tokenUtil struct{}
 func NewTokenUtil() *tokenUtil {
 	return &tokenUtil{}
 }
-
 func (*tokenUtil) GenerateToken(uid uuid.UUID, roleID uint) (string, error) {
 	claims := JWTClaim{
 		UID:    uid,
@@ -43,4 +38,10 @@ func (*tokenUtil) GenerateToken(uid uuid.UUID, roleID uint) (string, error) {
 	}
 
 	return signedToken, nil
+}
+
+func (*tokenUtil) GetClaims(c echo.Context) *JWTClaim {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*JWTClaim)
+	return claims
 }
