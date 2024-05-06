@@ -10,4 +10,7 @@ const (
 	// user preference
 	MsgPreferenceUpdated         = "preference updated successfully"
 	MsgRetrievePreferenceSuccess = "preference retreived successfully"
+
+	// country
+	MsgRetrieveCountrySuccess = "country retreived successfully"
 )
