@@ -18,11 +18,12 @@ const (
 
 	// users
 	MsgUserCreationFailed = "failed to create user"
-	MsgCountryNotFound    = "country not found"
 	MsgUserExist          = "username or email already exist"
 	MsgLoginFailed        = "failed to login"
 	MsgUnregisteredEmail  = "unregistered email"
 	MsgUnregisteredUser   = "unregistered user"
+	MsgGetUserFailed      = "failed to retreive user"
+	MsgUpdateUserFailed   = "failed to update user"
 
 	// user preference
 	MsgUpdatePreferenceFailed  = "failed to update preference"
@@ -33,4 +34,8 @@ const (
 	MsgFailedGeneratingToken = "failed generating token"
 	MsgUnauthorized          = "unauthorized user"
 	MsgInvalidToken          = "invalid token"
+
+	// country
+	MsgCountryNotFound    = "country not found"
+	MsgGetCountriesFailed = "failed to get countries"
 )

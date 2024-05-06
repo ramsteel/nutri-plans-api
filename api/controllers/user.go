@@ -9,6 +9,7 @@ import (
 	"nutri-plans-api/usecases"
 	errutil "nutri-plans-api/utils/error"
 	httputil "nutri-plans-api/utils/http"
+	tokenutil "nutri-plans-api/utils/token"
 	valutil "nutri-plans-api/utils/validation"
 
 	httpconst "nutri-plans-api/constants/http"
@@ -19,13 +20,20 @@ import (
 
 type userController struct {
 	userUsecase usecases.UserUsecase
-	validator   *valutil.Validator
+
+	validator *valutil.Validator
+	tokenUtil tokenutil.TokenUtil
 }
 
-func NewUserController(userUsecase usecases.UserUsecase, v *valutil.Validator) *userController {
+func NewUserController(
+	userUsecase usecases.UserUsecase,
+	v *valutil.Validator,
+	t tokenutil.TokenUtil,
+) *userController {
 	return &userController{
 		userUsecase: userUsecase,
 		validator:   v,
+		tokenUtil:   t,
 	}
 }
 
@@ -124,4 +132,77 @@ func (u *userController) Login(c echo.Context) error {
 	}
 
 	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgLoginSuccess, res)
+}
+
+func (u *userController) GetUserDetail(c echo.Context) error {
+	claims := u.tokenUtil.GetClaims(c)
+
+	user, err := u.userUsecase.GetUserByID(c, claims.UID)
+	if err != nil {
+		var (
+			code int    = http.StatusInternalServerError
+			msg  string = msgconst.MsgGetUserFailed
+		)
+
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgUnregisteredUser
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgGetUserFailed
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgGetUserFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgRetrieveUserSuccess, user)
+}
+
+func (u *userController) UpdateUser(c echo.Context) error {
+	claims := u.tokenUtil.GetClaims(c)
+
+	req := new(dto.UpdateUserRequest)
+	if err := c.Bind(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
+	}
+
+	if err := u.validator.Validate(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	err := u.userUsecase.UpdateUser(c, claims.UID, req)
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgUpdateUserFailed
+		case errors.Is(err, gorm.ErrForeignKeyViolated):
+			code = http.StatusNotFound
+			msg = msgconst.MsgCountryNotFound
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgUpdateUserFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgUpdateUserSuccess, nil)
 }

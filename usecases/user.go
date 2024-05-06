@@ -8,12 +8,15 @@ import (
 	passutil "nutri-plans-api/utils/password"
 	tokenutil "nutri-plans-api/utils/token"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
 type UserUsecase interface {
 	Register(c echo.Context, r *dto.RegisterRequest) error
 	Login(c echo.Context, r *dto.LoginRequest) (*dto.LoginResponse, error)
+	GetUserByID(c echo.Context, id uuid.UUID) (*entities.User, error)
+	UpdateUser(c echo.Context, id uuid.UUID, r *dto.UpdateUserRequest) error
 }
 
 type userUsecase struct {
@@ -94,4 +97,35 @@ func (u *userUsecase) Login(c echo.Context, r *dto.LoginRequest) (*dto.LoginResp
 	}
 
 	return &dto.LoginResponse{Token: token}, nil
+}
+
+func (u *userUsecase) GetUserByID(c echo.Context, id uuid.UUID) (*entities.User, error) {
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	return u.userRepo.GetUserByID(ctx, id)
+}
+
+func (u *userUsecase) UpdateUser(c echo.Context, id uuid.UUID, r *dto.UpdateUserRequest) error {
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	user := &entities.User{
+		AuthID: id,
+		Auth: entities.Auth{
+			ID:       id,
+			Email:    r.Email,
+			Username: r.Username,
+		},
+		FirstName: r.FirstName,
+		LastName:  r.LastName,
+		Dob:       r.Dob,
+		Gender:    r.Gender,
+		CountryID: r.CountryID,
+	}
+	if err := u.userRepo.UpdateUser(ctx, user); err != nil {
+		return err
+	}
+
+	return nil
 }
