@@ -44,4 +44,7 @@ const (
 
 	// drink types
 	MsgGetDrinkTypesFailed = "failed to get drink types"
+
+	// dietary preference types
+	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
 )

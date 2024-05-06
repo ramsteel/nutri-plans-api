@@ -19,4 +19,7 @@ const (
 
 	// drink types
 	MsgRetrieveDrinkTypesSuccess = "drink types retreived successfully"
+
+	// dietary preference types
+	MsgRetrieveDietaryPreferenceTypesSuccess = "dietary preference types retreived successfully"
 )
