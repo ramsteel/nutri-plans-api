@@ -9,6 +9,8 @@ import (
 
 func Init(e *echo.Echo, db *gorm.DB, v *valutil.Validator) {
 	userRoute := e.Group("")
+	userPreference := e.Group("/preferences")
 
 	initUserRoute(userRoute, db, v)
+	initUserPreferenceRoute(userPreference, db, v)
 }
