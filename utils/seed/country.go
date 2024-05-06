@@ -29,7 +29,7 @@ func LoadCountryData(fp string) *[]entities.Country {
 			countries,
 			entities.Country{
 				ID:   i,
-				Name: strings.ToLower(string(line)),
+				Name: strings.TrimSpace(strings.ToLower(string(line))),
 			},
 		)
 		i++
