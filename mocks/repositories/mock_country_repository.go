@@ -14,6 +14,36 @@ type MockCountryRepository struct {
 	mock.Mock
 }
 
+// GetAllCountries provides a mock function with given fields: ctx
+func (_m *MockCountryRepository) GetAllCountries(ctx context.Context) (*[]entities.Country, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllCountries")
+	}
+
+	var r0 *[]entities.Country
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (*[]entities.Country, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) *[]entities.Country); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]entities.Country)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetCountryByID provides a mock function with given fields: ctx, id
 func (_m *MockCountryRepository) GetCountryByID(ctx context.Context, id uint) (*entities.Country, error) {
 	ret := _m.Called(ctx, id)
