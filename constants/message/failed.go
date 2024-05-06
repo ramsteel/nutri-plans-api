@@ -22,7 +22,15 @@ const (
 	MsgUserExist          = "username or email already exist"
 	MsgLoginFailed        = "failed to login"
 	MsgUnregisteredEmail  = "unregistered email"
+	MsgUnregisteredUser   = "unregistered user"
+
+	// user preference
+	MsgUpdatePreferenceFailed  = "failed to update preference"
+	MsgGetPreferenceFailed     = "failed to get preference"
+	MsgPreferenceInputNotFound = "food/drink/dietary preference types not found"
 
 	// token
 	MsgFailedGeneratingToken = "failed generating token"
+	MsgUnauthorized          = "unauthorized user"
+	MsgInvalidToken          = "invalid token"
 )

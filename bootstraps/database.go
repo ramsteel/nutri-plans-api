@@ -6,9 +6,8 @@ import (
 	fpconst "nutri-plans-api/constants/filepath"
 	msgconst "nutri-plans-api/constants/message"
 	"nutri-plans-api/entities"
-	countryutil "nutri-plans-api/utils/country"
 	loggerutil "nutri-plans-api/utils/logger"
-	roleutil "nutri-plans-api/utils/role"
+	seedutil "nutri-plans-api/utils/seed"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -68,24 +67,54 @@ func NewDatabase() *gorm.DB {
 
 func migrate(db *gorm.DB) {
 	db.AutoMigrate(&entities.RoleType{}, &entities.Auth{}) // auth
-	db.AutoMigrate(&entities.User{}, &entities.Country{})  // user
+	db.AutoMigrate(&entities.Country{}, &entities.User{})  // user
+	db.AutoMigrate(
+		&entities.FoodType{},
+		&entities.DrinkType{},
+		&entities.DietaryPreferenceType{},
+	) // food, drink, and dietary preference
+	db.AutoMigrate(&entities.UserPreference{}, &entities.DietaryRestriction{}) // user preference
 }
 
 func seed(db *gorm.DB) {
 	seedCountries(db)
 	seedRoles(db)
+	seedFoodTypes(db)
+	seedDrinkTypes(db)
+	seedDietaryPreferenceTypes(db)
 }
 
 func seedCountries(db *gorm.DB) {
-	countries := countryutil.LoadData(fpconst.CountryDataPath)
+	countries := seedutil.LoadCountryData(fpconst.CountryDataPath)
 	if err := db.Save(countries).Error; err != nil {
 		log.Fatal(msgconst.MsgSeedFailed)
 	}
 }
 
 func seedRoles(db *gorm.DB) {
-	roleTypes := roleutil.GetRoleTypes()
+	roleTypes := seedutil.GetRoleTypes()
 	if err := db.Save(roleTypes).Error; err != nil {
+		log.Fatal(msgconst.MsgSeedFailed)
+	}
+}
+
+func seedFoodTypes(db *gorm.DB) {
+	foodTypes := seedutil.GetFoodTypes()
+	if err := db.Save(foodTypes).Error; err != nil {
+		log.Fatal(msgconst.MsgSeedFailed)
+	}
+}
+
+func seedDrinkTypes(db *gorm.DB) {
+	drinkTypes := seedutil.GetDrinkTypes()
+	if err := db.Save(drinkTypes).Error; err != nil {
+		log.Fatal(msgconst.MsgSeedFailed)
+	}
+}
+
+func seedDietaryPreferenceTypes(db *gorm.DB) {
+	dietaryPreferencesTypes := seedutil.GetDietaryPreferenceTypes()
+	if err := db.Save(dietaryPreferencesTypes).Error; err != nil {
 		log.Fatal(msgconst.MsgSeedFailed)
 	}
 }

@@ -1,4 +1,4 @@
-package country
+package seed
 
 import (
 	"bufio"
@@ -6,9 +6,10 @@ import (
 	msgconst "nutri-plans-api/constants/message"
 	"nutri-plans-api/entities"
 	"os"
+	"strings"
 )
 
-func LoadData(fp string) *[]entities.Country {
+func LoadCountryData(fp string) *[]entities.Country {
 	f, err := os.Open(fp)
 	if err != nil {
 		log.Fatal(msgconst.MsgFailedOpenFile)
@@ -28,7 +29,7 @@ func LoadData(fp string) *[]entities.Country {
 			countries,
 			entities.Country{
 				ID:   i,
-				Name: string(line),
+				Name: strings.ToLower(string(line)),
 			},
 		)
 		i++

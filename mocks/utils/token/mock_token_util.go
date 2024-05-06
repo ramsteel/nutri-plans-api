@@ -3,7 +3,10 @@
 package token
 
 import (
+	echo "github.com/labstack/echo/v4"
 	mock "github.com/stretchr/testify/mock"
+
+	token "nutri-plans-api/utils/token"
 
 	uuid "github.com/google/uuid"
 )
@@ -39,6 +42,26 @@ func (_m *MockTokenUtil) GenerateToken(uid uuid.UUID, roleID uint) (string, erro
 	}
 
 	return r0, r1
+}
+
+// GetClaims provides a mock function with given fields: c
+func (_m *MockTokenUtil) GetClaims(c echo.Context) *token.JWTClaim {
+	ret := _m.Called(c)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetClaims")
+	}
+
+	var r0 *token.JWTClaim
+	if rf, ok := ret.Get(0).(func(echo.Context) *token.JWTClaim); ok {
+		r0 = rf(c)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*token.JWTClaim)
+		}
+	}
+
+	return r0
 }
 
 // NewMockTokenUtil creates a new instance of MockTokenUtil. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
