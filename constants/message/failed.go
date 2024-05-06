@@ -23,6 +23,8 @@ const (
 	MsgLoginFailed        = "failed to login"
 	MsgUnregisteredEmail  = "unregistered email"
 	MsgUnregisteredUser   = "unregistered user"
+	MsgGetUserFailed      = "failed to retreive user"
+	MsgUpdateUserFailed   = "failed to update user"
 
 	// user preference
 	MsgUpdatePreferenceFailed  = "failed to update preference"
