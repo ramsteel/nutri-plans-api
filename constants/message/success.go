@@ -16,4 +16,7 @@ const (
 
 	// food types
 	MsgRetrieveFoodTypesSuccess = "food types retreived successfully"
+
+	// drink types
+	MsgRetrieveDrinkTypesSuccess = "drink types retreived successfully"
 )

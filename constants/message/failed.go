@@ -41,4 +41,7 @@ const (
 
 	// food types
 	MsgGetFoodTypesFailed = "failed to get food types"
+
+	// drink types
+	MsgGetDrinkTypesFailed = "failed to get drink types"
 )
