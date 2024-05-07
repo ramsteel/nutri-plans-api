@@ -21,3 +21,20 @@ func HandleSuccessResponse(c echo.Context, code int, message string, data any) e
 		Data:    data,
 	})
 }
+
+func HandleSearchResponse(
+	c echo.Context,
+	code int,
+	message string,
+	data any,
+	metadata *dto.MetadataResponse,
+) error {
+	return c.JSON(code, &dto.SearchResponse{
+		BaseResponse: dto.BaseResponse{
+			Status:  statusconst.StatusSuccess,
+			Message: message,
+			Data:    data,
+		},
+		Metadata: metadata,
+	})
+}
