@@ -215,3 +215,104 @@ func TestLogin(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateUser(t *testing.T) {
+	var (
+		id = uuid.New()
+		r  = &dto.UpdateUserRequest{
+			Email:     "some@example.com",
+			Username:  "testuser",
+			FirstName: "test",
+			LastName:  "user",
+			Dob:       time.UnixMilli(1714757476909),
+			Gender:    "M",
+			CountryID: 1,
+		}
+		user = &entities.User{
+			AuthID: id,
+			Auth: entities.Auth{
+				ID:       id,
+				Email:    r.Email,
+				Username: r.Username,
+			},
+			FirstName: r.FirstName,
+			LastName:  r.LastName,
+			Dob:       r.Dob,
+			Gender:    r.Gender,
+			CountryID: r.CountryID,
+		}
+	)
+
+	testCases := []testCase{
+		{
+			name: "success",
+			errs: []error{nil},
+		},
+		{
+			name: "error update",
+			errs: []error{errors.New("failed to update")},
+		},
+	}
+
+	for idx, tc := range testCases {
+		mockUserRepo := new(mockrepo.MockUserRepository)
+		mockAuthRepo := new(mockrepo.MockAuthRepository)
+		mockCountryRepo := new(mockrepo.MockCountryRepository)
+		mockPassUtil := new(mockpass.MockPasswordUtil)
+		mockTokenUtil := new(mocktoken.MockTokenUtil)
+		u := usecases.NewUserUsecase(
+			mockUserRepo,
+			mockAuthRepo,
+			mockCountryRepo,
+			mockPassUtil,
+			mockTokenUtil,
+		)
+		t.Run(tc.name, func(t *testing.T) {
+			e := echo.New()
+			req := httptest.NewRequest(http.MethodPut, "/profiles", nil)
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			ctx, cancel := context.WithCancel(c.Request().Context())
+			defer cancel()
+			mockUserRepo.On("UpdateUser", ctx, user).Return(tc.errs[0])
+			err := u.UpdateUser(c, id, r)
+			if idx != 0 {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestGetUserByID(t *testing.T) {
+	var (
+		id      = uuid.New()
+		example = &entities.User{AuthID: id}
+	)
+	mockUserRepo := new(mockrepo.MockUserRepository)
+	mockAuthRepo := new(mockrepo.MockAuthRepository)
+	mockCountryRepo := new(mockrepo.MockCountryRepository)
+	mockPassUtil := new(mockpass.MockPasswordUtil)
+	mockTokenUtil := new(mocktoken.MockTokenUtil)
+	u := usecases.NewUserUsecase(
+		mockUserRepo,
+		mockAuthRepo,
+		mockCountryRepo,
+		mockPassUtil,
+		mockTokenUtil,
+	)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/profiles", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+	mockUserRepo.On("GetUserByID", ctx, id).Return(example, nil)
+	res, err := u.GetUserByID(c, id)
+	assert.NoError(t, err)
+	assert.Equal(t, res, example)
+}
