@@ -9,7 +9,7 @@ import (
 )
 
 type CountryUsecase interface {
-	GetAllCountry(c echo.Context) (*[]entities.Country, error)
+	GetCountries(c echo.Context) (*[]entities.Country, error)
 }
 
 type countryUsecase struct {
@@ -22,7 +22,7 @@ func NewCountryUsecase(countryRepo repositories.CountryRepository) *countryUseca
 	}
 }
 
-func (u *countryUsecase) GetAllCountry(c echo.Context) (*[]entities.Country, error) {
+func (u *countryUsecase) GetCountries(c echo.Context) (*[]entities.Country, error) {
 	ctx, cancel := context.WithCancel(c.Request().Context())
 	defer cancel()
 

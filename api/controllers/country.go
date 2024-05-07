@@ -23,7 +23,7 @@ func NewCountryController(countryUsecase usecases.CountryUsecase) *countryContro
 }
 
 func (cc *countryController) GetCountries(c echo.Context) error {
-	res, err := cc.countryUsecase.GetAllCountry(c)
+	res, err := cc.countryUsecase.GetCountries(c)
 	if err != nil {
 		var (
 			code int    = http.StatusInternalServerError
