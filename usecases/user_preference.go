@@ -50,7 +50,7 @@ func (u *userPreferenceUsecase) UpdateUserPreference(
 	}
 
 	if r.DietaryRestrictions != nil {
-		filterDietaryRestrictions(dietaryRestrictions, r.DietaryRestrictions)
+		FilterDietaryRestrictions(dietaryRestrictions, r.DietaryRestrictions)
 	}
 
 	userPreference := &entities.UserPreference{
@@ -74,7 +74,7 @@ func (u *userPreferenceUsecase) GetUserPreference(
 	return u.userPreferenceRepo.GetUserPreference(ctx, id)
 }
 
-func filterDietaryRestrictions(dietaryRestrictions *[]entities.DietaryRestriction, data *[]string) {
+func FilterDietaryRestrictions(dietaryRestrictions *[]entities.DietaryRestriction, data *[]string) {
 	nameFlagged := make(map[string]bool)
 	lenDietaryRestrictions := len(*dietaryRestrictions)
 	idx := 0
