@@ -47,4 +47,12 @@ const (
 
 	// dietary preference types
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
+
+	// external services
+	MsgExternalServiceError = "external service error"
+	MsgFailedDecodeJson     = "failed to decode json"
+	MsgQueryMinimum         = "item must at least 3 characters"
+	MsgSearchItemFailed     = "failed to search item"
+	MsgRetrieveItemSuccess  = "item retreived successfully"
+	MsgItemNotFound         = "item not found"
 )
