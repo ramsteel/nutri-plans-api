@@ -2,7 +2,8 @@ openapi: '3.0.2'
 info:
   title: NutriPlans API
   version: '0.0.0'
-  description: This API provides functionalities to manage and track your daily nutritional intake.
+  description: |
+    This API provides functionalities to manage and track your daily nutritional intake. This API also provides recommendations for healthy eating based on your preferences. To track the nutrition details of your food or drink, this API integrated with [Nutritionix API](https://www.nutritionix.com/business/api) service.
 servers:
   - url: http://localhost:8080
     description: development server
@@ -17,6 +18,8 @@ tags:
     description: Dietary preference types management
   - name: preferences
     description: Preferences management
+  - name: nutrition
+    description: Nutritions management
 
 paths:
   /register:
@@ -261,6 +264,32 @@ paths:
               example:
                 status: failed
                 message: failed to update preference
+  /nutrition/items/search:
+    get:
+      tags:
+        - nutrition
+      summary: Search items
+      description: Search items
+      operationId: searchItems
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/SearchItemsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to search items
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
 components:
   schemas:
     Country:
@@ -490,6 +519,34 @@ components:
           type: string
           format: date-time
           description: The deleted at of the user preference
+    SearchResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the response
+        message:
+          type: string
+          description: The message of the response
+        data:
+          type: object
+          description: The data of the response
+        metadata:
+          type: object
+          description: The metadata of the response
+          properties:
+            total_data:
+              type: integer
+              description: The total data of the response
+            total_count:
+              type: integer
+              description: The total count of the response has loaded
+            next_offset:
+              type: integer
+              description: The offset for next the loaded more
+            has_load_more:
+              type: boolean
+              description: The has load more of the response
     BaseResponse:
       type: object
       properties:
@@ -619,6 +676,15 @@ components:
               value:
                 status: failed
                 message: unauthorized user
+    BadGateway:
+      description: Bad Gateway
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: failed
+            message: external service error
     PreferenceResponse:
       description: OK
       content:
@@ -711,6 +777,24 @@ components:
               - id: 4
                 name: dairy-free
                 description: 'dairy-free is a type of food that does not contain any dairy products. ex: milk, cheese, yogurt, etc.'
+    SearchItemsResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SearchResponse'
+          example:
+            status: success
+            message: items retreived successfully
+            data:
+              - tag_id: '456'
+                tag_name: apfelstrudel
+                photo:
+                  thumb: 'https://d2eawub7utcl6.cloudfront.net/images/nix-apple-grey.png'
+              - tag_id: '123'
+                tag_name: apfelstrudel
+                photo:
+                  thumb: 'https://nix-tag-images.s3.amazonaws.com/7827_thumb.jpg'
   securitySchemes:
     BearerAuth:
       type: http
