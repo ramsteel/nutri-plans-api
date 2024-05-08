@@ -52,8 +52,9 @@ const (
 	MsgGetMealTypesFailed = "failed to get meal types"
 
 	// meals
-	MsgMealNotFound       = "meal not found"
-	MsgGetTodayMealFailed = "failed to get today meal"
+	MsgMealNotFound        = "meal not found"
+	MsgGetTodayMealFailed  = "failed to get today meal"
+	MsgAddItemToMealFailed = "failed to add item to meal"
 
 	// external services
 	MsgExternalServiceError   = "external service error"
