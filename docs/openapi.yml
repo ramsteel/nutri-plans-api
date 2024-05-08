@@ -19,7 +19,7 @@ tags:
   - name: preferences
     description: Preferences management
   - name: nutrition
-    description: Nutritions management
+    description: Nutritions informations
 
 paths:
   /register:
@@ -287,6 +287,48 @@ paths:
               example:
                 status: failed
                 message: failed to search items
+        '502':
+          $ref: '#/components/responses/BadGateway'
+  /nutrition/{item-name}:
+    get:
+      tags:
+        - nutrition
+      summary: Get item nutritions
+      description: Get item nutritions
+      operationId: getItemNutrition
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: item-name
+          required: true
+          schema:
+            type: string
+          description: The name of the item
+          example: apple
+      responses:
+        '200':
+          $ref: '#/components/responses/ItemNutritionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: item not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get item nutritions
         '502':
           $ref: '#/components/responses/BadGateway'
 
@@ -788,13 +830,54 @@ components:
             message: items retreived successfully
             data:
               - tag_id: '456'
-                tag_name: apfelstrudel
+                tag_name: item 1
                 photo:
-                  thumb: 'https://d2eawub7utcl6.cloudfront.net/images/nix-apple-grey.png'
+                  thumb: photo_url
               - tag_id: '123'
-                tag_name: apfelstrudel
+                tag_name: item 2
                 photo:
-                  thumb: 'https://nix-tag-images.s3.amazonaws.com/7827_thumb.jpg'
+                  thumb: photo_url
+    ItemNutritionResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: item nutrition retreived successfully
+            data:
+              food_name: apple
+              serving_qty: 1
+              serving_unit: unit
+              serving_weight_grams: 123
+              alt_measures:
+                - serving_weight: 123
+                  measure: measure 1
+                  qty: 1
+                - serving_weight: 234
+                  measure: measure 2
+                  qty: 1
+                - serving_weight: 345
+                  measure: measure 3
+                  qty: 1
+                - serving_weight: 456
+                  measure: measure 4
+                  qty: 1
+                - serving_weight: 567
+                  measure: measure 5
+                  qty: 1
+                - serving_weight: 678
+                  measure: measure 6
+                  qty: 1
+              photo:
+                thumb: photo_url
+              nf_calories: 94.64
+              nf_fat: 0
+              nf_cholesterol: 0
+              nf_total_carbohydrate: 25.13
+              nf_sugars: 18.91
+              nf_protein: 0.47
   securitySchemes:
     BearerAuth:
       type: http
