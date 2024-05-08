@@ -11,6 +11,8 @@ import (
 type NutritionUsecase interface {
 	SearchItem(c echo.Context, itemName string, limit, offset int) (
 		*[]ex.Item, *dto.MetadataResponse, error)
+	GetItemNutrition(c echo.Context, r *dto.ItemNutritionRequest) (
+		*ex.ItemNutrition, error)
 }
 
 type nutritionUsecase struct {
@@ -61,6 +63,16 @@ func (n *nutritionUsecase) SearchItem(
 	}
 
 	return &filteredItems, metadata, nil
+}
+
+func (n *nutritionUsecase) GetItemNutrition(
+	c echo.Context,
+	r *dto.ItemNutritionRequest,
+) (*ex.ItemNutrition, error) {
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	return n.nutrtionExternal.GetItemNutrition(ctx, r)
 }
 
 func (n *nutritionUsecase) filterItems(items *[]ex.Item) *[]ex.Item {
