@@ -20,5 +20,5 @@ func initMealRoute(g *echo.Group, db *gorm.DB) {
 
 	g.Use(echojwt.WithConfig(tokenutil.GetJwtConfig()))
 
-	g.GET("", mealController.GetTodayMeal)
+	g.GET("/today", mealController.GetTodayMeal)
 }
