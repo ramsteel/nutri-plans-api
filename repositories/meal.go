@@ -12,6 +12,7 @@ import (
 
 type MealRepository interface {
 	GetTodayMeal(ctx context.Context, uid uuid.UUID, start, end time.Time) (*entities.Meal, error)
+	AddMeal(ctx context.Context, meal *entities.Meal) error
 }
 
 type mealRepository struct {
@@ -29,6 +30,9 @@ func (m *mealRepository) GetTodayMeal(
 	uid uuid.UUID,
 	start, end time.Time,
 ) (*entities.Meal, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 
 	meal := new(entities.Meal)
 	err := m.db.Preload("MealItems.MealType").Preload(clause.Associations).Where(
@@ -40,4 +44,12 @@ func (m *mealRepository) GetTodayMeal(
 	}
 
 	return meal, nil
+}
+
+func (m *mealRepository) AddMeal(ctx context.Context, meal *entities.Meal) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	return m.db.Save(meal).Error
 }

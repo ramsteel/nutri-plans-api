@@ -26,5 +26,5 @@ func Init(e *echo.Echo, db *gorm.DB, v *valutil.Validator) {
 	initDietaryPreferenceTypeRoute(dietaryPreferenceTypeRoute, db)
 	initNutritionRoute(nutritionRoute)
 	initMealTypeRoute(mealTypeRoute, db)
-	initMealRoute(mealRoute, db)
+	initMealRoute(mealRoute, db, v)
 }
