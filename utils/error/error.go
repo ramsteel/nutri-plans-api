@@ -14,7 +14,6 @@ var (
 	ErrFailedGeneratingToken = errors.New(msgconst.MsgFailedGeneratingToken)
 
 	// external services
-	ErrExternalService  = errors.New(msgconst.MsgExternalServiceError)
-	ErrFailedDecodeJson = errors.New(msgconst.MsgFailedDecodeJson)
-	ErrItemNotFound     = errors.New(msgconst.MsgItemNotFound)
+	ErrExternalService = errors.New(msgconst.MsgExternalServiceError)
+	ErrItemNotFound    = errors.New(msgconst.MsgItemNotFound)
 )
