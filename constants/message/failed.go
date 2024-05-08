@@ -49,10 +49,9 @@ const (
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
 
 	// external services
-	MsgExternalServiceError = "external service error"
-	MsgFailedDecodeJson     = "failed to decode json"
-	MsgQueryMinimum         = "item must at least 3 characters"
-	MsgSearchItemFailed     = "failed to search item"
-	MsgRetrieveItemSuccess  = "item retreived successfully"
-	MsgItemNotFound         = "item not found"
+	MsgExternalServiceError   = "external service error"
+	MsgQueryMinimum           = "item must at least 3 characters"
+	MsgSearchItemFailed       = "failed to search item"
+	MsgItemNotFound           = "item not found"
+	MsgGetItemNutritionFailed = "failed to get item nutrition"
 )

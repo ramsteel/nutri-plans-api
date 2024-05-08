@@ -4,12 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
+	"nutri-plans-api/dto"
 	errutil "nutri-plans-api/utils/error"
 )
 
 type NutritionClient interface {
 	SearchItem(ctx context.Context, name string) (*[]Item, error)
+	GetItemNutrition(ctx context.Context, r *dto.ItemNutritionRequest) (*ItemNutrition, error)
 }
 
 type nutritionClient struct {
@@ -49,8 +52,50 @@ func (n *nutritionClient) SearchItem(ctx context.Context, name string) (*[]Item,
 	searchItemRes := new(SearchItemResponse)
 	err = json.NewDecoder(res.Body).Decode(searchItemRes)
 	if err != nil {
-		return nil, errutil.ErrFailedDecodeJson
+		return nil, err
 	}
 
 	return searchItemRes.Common, nil
+}
+
+func (n *nutritionClient) GetItemNutrition(
+	ctx context.Context,
+	r *dto.ItemNutritionRequest,
+) (*ItemNutrition, error) {
+	url := "https://trackapi.nutritionix.com/v2/natural/nutrients"
+
+	strReq, err := json.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		url,
+		strings.NewReader(string(strReq)),
+	)
+	if err != nil {
+		return nil, errutil.ErrExternalService
+	}
+
+	req.Header.Set("x-app-id", n.appID)
+	req.Header.Set("x-app-key", n.appKey)
+
+	res, err := n.client.Do(req)
+	if err != nil {
+		return nil, errutil.ErrExternalService
+	}
+
+	if res.StatusCode == http.StatusNotFound {
+		return nil, errutil.ErrItemNotFound
+	}
+
+	nutritionRes := new(NutritionResponse)
+	err = json.NewDecoder(res.Body).Decode(nutritionRes)
+	if err != nil {
+		return nil, err
+	}
+
+	return &(*nutritionRes.Foods)[0], nil
 }

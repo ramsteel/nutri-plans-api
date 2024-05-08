@@ -22,4 +22,5 @@ func initNutritionRoute(g *echo.Group) {
 	g.Use(echojwt.WithConfig(tokenutil.GetJwtConfig()))
 
 	g.GET("/items/search", nutritionController.SearchItem)
+	g.GET("/:item-name", nutritionController.GetItemNutrition)
 }
