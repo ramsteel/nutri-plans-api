@@ -23,15 +23,10 @@ type ItemNutrition struct {
 type Nutrient struct {
 	Calories     float32 `json:"nf_calories"`
 	Fat          float32 `json:"nf_fat"`
-	SaturatedFat float32 `json:"nf_saturated_fat"`
 	Cholesterol  float32 `json:"nf_cholesterol"`
-	Sodium       float32 `json:"nf_sodium"`
 	Carbohydrate float32 `json:"nf_total_carbohydrate"`
-	DietaryFiber float32 `json:"nf_dietary_fiber"`
 	Sugar        float32 `json:"nf_sugars"`
 	Protein      float32 `json:"nf_protein"`
-	Potassium    float32 `json:"nf_potassium"`
-	P            float32 `json:"nf_p"`
 }
 
 type Measure struct {
