@@ -74,6 +74,7 @@ func migrate(db *gorm.DB) {
 		&entities.DietaryPreferenceType{},
 	) // food, drink, and dietary preference
 	db.AutoMigrate(&entities.UserPreference{}, &entities.DietaryRestriction{}) // user preference
+	db.AutoMigrate(&entities.MealType{})                                       // meal types
 }
 
 func seed(db *gorm.DB) {
@@ -82,6 +83,7 @@ func seed(db *gorm.DB) {
 	seedFoodTypes(db)
 	seedDrinkTypes(db)
 	seedDietaryPreferenceTypes(db)
+	seedMealTypes(db)
 }
 
 func seedCountries(db *gorm.DB) {
@@ -115,6 +117,13 @@ func seedDrinkTypes(db *gorm.DB) {
 func seedDietaryPreferenceTypes(db *gorm.DB) {
 	dietaryPreferencesTypes := seedutil.GetDietaryPreferenceTypes()
 	if err := db.Save(dietaryPreferencesTypes).Error; err != nil {
+		log.Fatal(msgconst.MsgSeedFailed)
+	}
+}
+
+func seedMealTypes(db *gorm.DB) {
+	mealTypes := seedutil.GetMealTypes()
+	if err := db.Save(mealTypes).Error; err != nil {
 		log.Fatal(msgconst.MsgSeedFailed)
 	}
 }
