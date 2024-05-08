@@ -16,6 +16,24 @@ type MockUserPreferenceRepository struct {
 	mock.Mock
 }
 
+// CreateUserPreference provides a mock function with given fields: ctx, userPreference
+func (_m *MockUserPreferenceRepository) CreateUserPreference(ctx context.Context, userPreference *entities.UserPreference) error {
+	ret := _m.Called(ctx, userPreference)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateUserPreference")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.UserPreference) error); ok {
+		r0 = rf(ctx, userPreference)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetUserPreference provides a mock function with given fields: ctx, id
 func (_m *MockUserPreferenceRepository) GetUserPreference(ctx context.Context, id uuid.UUID) (*entities.UserPreference, error) {
 	ret := _m.Called(ctx, id)

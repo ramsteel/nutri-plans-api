@@ -17,12 +17,15 @@ func initUserRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	userRepository := repositories.NewUserRepository(db)
 	countryRepository := repositories.NewCountryRepository(db)
 	authRepository := repositories.NewAuthRepository(db)
+	userPreferenceRepository := repositories.NewUserPreferenceRepository(db)
+
 	passUtil := passutil.NewPasswordUtil()
 	tokenUtil := tokenutil.NewTokenUtil()
 
 	userUsecase := usecases.NewUserUsecase(
 		userRepository,
 		authRepository,
+		userPreferenceRepository,
 		countryRepository,
 		passUtil,
 		tokenUtil,
@@ -33,6 +36,6 @@ func initUserRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	g.POST("/login", userController.Login)
 
 	g.Use(echojwt.WithConfig(tokenutil.GetJwtConfig()))
-	g.GET("/profiles", userController.GetUserDetail)
-	g.PUT("/profiles", userController.UpdateUser)
+	g.GET("/profile", userController.GetUserDetail)
+	g.PUT("/profile", userController.UpdateUser)
 }

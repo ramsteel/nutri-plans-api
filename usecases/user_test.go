@@ -32,6 +32,7 @@ func TestNewUserUsecase(t *testing.T) {
 		usecases.NewUserUsecase(
 			mockrepo.NewMockUserRepository(t),
 			mockrepo.NewMockAuthRepository(t),
+			mockrepo.NewMockUserPreferenceRepository(t),
 			mockrepo.NewMockCountryRepository(t),
 			mockpass.NewMockPasswordUtil(t),
 			mocktoken.NewMockTokenUtil(t),
@@ -77,31 +78,37 @@ func TestRegister(t *testing.T) {
 	testCases := []testCase{
 		{
 			name: "success",
-			errs: []error{nil, nil, nil},
+			errs: []error{nil, nil, nil, nil},
 		},
 		{
 			name: "error get country",
-			errs: []error{errors.New("country not found"), nil, nil},
+			errs: []error{errors.New("country not found"), nil, nil, nil},
 		},
 		{
 			name: "error hash password",
-			errs: []error{nil, errors.New("failed hashing password"), nil},
+			errs: []error{nil, errors.New("failed hashing password"), nil, nil},
 		},
 		{
 			name: "error create auth",
-			errs: []error{nil, nil, errors.New("failed to create auth")},
+			errs: []error{nil, nil, errors.New("failed to create auth"), nil},
+		},
+		{
+			name: "error create user",
+			errs: []error{nil, nil, nil, errors.New("failed to create user")},
 		},
 	}
 
 	for idx, tc := range testCases {
 		mockUserRepo := new(mockrepo.MockUserRepository)
 		mockAuthRepo := new(mockrepo.MockAuthRepository)
+		mockUserPreferenceRepo := new(mockrepo.MockUserPreferenceRepository)
 		mockCountryRepo := new(mockrepo.MockCountryRepository)
 		mockPassUtil := new(mockpass.MockPasswordUtil)
 		mockTokenUtil := new(mocktoken.MockTokenUtil)
 		u := usecases.NewUserUsecase(
 			mockUserRepo,
 			mockAuthRepo,
+			mockUserPreferenceRepo,
 			mockCountryRepo,
 			mockPassUtil,
 			mockTokenUtil,
@@ -120,7 +127,12 @@ func TestRegister(t *testing.T) {
 				tc.errs[1],
 			)
 			mockAuthRepo.On("CreateAuth", ctx, auth).Return(tc.errs[2])
-			mockUserRepo.On("CreateUser", ctx, user).Return(nil)
+			mockUserRepo.On("CreateUser", ctx, user).Return(tc.errs[3])
+			mockUserPreferenceRepo.On(
+				"CreateUserPreference",
+				ctx,
+				&entities.UserPreference{UserID: user.AuthID},
+			).Return(nil)
 			err := u.Register(c, registerRequest)
 
 			if idx != 0 {
@@ -178,12 +190,14 @@ func TestLogin(t *testing.T) {
 	for idx, tc := range testCases {
 		mockUserRepo := new(mockrepo.MockUserRepository)
 		mockAuthRepo := new(mockrepo.MockAuthRepository)
+		mockUserPreferenceRepo := new(mockrepo.MockUserPreferenceRepository)
 		mockCountryRepo := new(mockrepo.MockCountryRepository)
 		mockPassUtil := new(mockpass.MockPasswordUtil)
 		mockTokenUtil := new(mocktoken.MockTokenUtil)
 		u := usecases.NewUserUsecase(
 			mockUserRepo,
 			mockAuthRepo,
+			mockUserPreferenceRepo,
 			mockCountryRepo,
 			mockPassUtil,
 			mockTokenUtil,
@@ -257,12 +271,14 @@ func TestUpdateUser(t *testing.T) {
 	for idx, tc := range testCases {
 		mockUserRepo := new(mockrepo.MockUserRepository)
 		mockAuthRepo := new(mockrepo.MockAuthRepository)
+		mockUserPreferenceRepo := new(mockrepo.MockUserPreferenceRepository)
 		mockCountryRepo := new(mockrepo.MockCountryRepository)
 		mockPassUtil := new(mockpass.MockPasswordUtil)
 		mockTokenUtil := new(mocktoken.MockTokenUtil)
 		u := usecases.NewUserUsecase(
 			mockUserRepo,
 			mockAuthRepo,
+			mockUserPreferenceRepo,
 			mockCountryRepo,
 			mockPassUtil,
 			mockTokenUtil,
@@ -293,12 +309,14 @@ func TestGetUserByID(t *testing.T) {
 	)
 	mockUserRepo := new(mockrepo.MockUserRepository)
 	mockAuthRepo := new(mockrepo.MockAuthRepository)
+	mockUserPreferenceRepo := new(mockrepo.MockUserPreferenceRepository)
 	mockCountryRepo := new(mockrepo.MockCountryRepository)
 	mockPassUtil := new(mockpass.MockPasswordUtil)
 	mockTokenUtil := new(mocktoken.MockTokenUtil)
 	u := usecases.NewUserUsecase(
 		mockUserRepo,
 		mockAuthRepo,
+		mockUserPreferenceRepo,
 		mockCountryRepo,
 		mockPassUtil,
 		mockTokenUtil,

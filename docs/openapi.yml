@@ -16,8 +16,8 @@ tags:
     description: Drink types management
   - name: dietary preference types
     description: Dietary preference types management
-  - name: preferences
-    description: Preferences management
+  - name: preference
+    description: Preference management
   - name: nutrition
     description: Nutritions informations
 
