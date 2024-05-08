@@ -9,7 +9,7 @@ import (
 
 func Init(e *echo.Echo, db *gorm.DB, v *valutil.Validator) {
 	userRoute := e.Group("")
-	userPreference := e.Group("/preferences")
+	userPreference := e.Group("/preference")
 	countryRoute := e.Group("/countries")
 	foodTypeRoute := e.Group("/food-types")
 	drinkTypeRoute := e.Group("/drink-types")

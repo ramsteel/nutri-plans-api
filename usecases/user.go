@@ -20,9 +20,10 @@ type UserUsecase interface {
 }
 
 type userUsecase struct {
-	userRepo    repositories.UserRepository
-	authRepo    repositories.AuthRepository
-	countryRepo repositories.CountryRepository
+	userRepo           repositories.UserRepository
+	authRepo           repositories.AuthRepository
+	userPreferenceRepo repositories.UserPreferenceRepository
+	countryRepo        repositories.CountryRepository
 
 	passUtil  passutil.PasswordUtil
 	tokenUtil tokenutil.TokenUtil
@@ -31,16 +32,18 @@ type userUsecase struct {
 func NewUserUsecase(
 	userRepo repositories.UserRepository,
 	authRepo repositories.AuthRepository,
+	userPreferenceRepo repositories.UserPreferenceRepository,
 	countryRepo repositories.CountryRepository,
 	passUtil passutil.PasswordUtil,
 	tokenUtil tokenutil.TokenUtil,
 ) *userUsecase {
 	return &userUsecase{
-		userRepo:    userRepo,
-		authRepo:    authRepo,
-		countryRepo: countryRepo,
-		passUtil:    passUtil,
-		tokenUtil:   tokenUtil,
+		userRepo:           userRepo,
+		authRepo:           authRepo,
+		userPreferenceRepo: userPreferenceRepo,
+		countryRepo:        countryRepo,
+		passUtil:           passUtil,
+		tokenUtil:          tokenUtil,
 	}
 }
 
@@ -75,7 +78,12 @@ func (u *userUsecase) Register(c echo.Context, r *dto.RegisterRequest) error {
 		Gender:    r.Gender,
 		Country:   *country,
 	}
-	return u.userRepo.CreateUser(ctx, user)
+	if err = u.userRepo.CreateUser(ctx, user); err != nil {
+		return err
+	}
+
+	userPreference := &entities.UserPreference{UserID: user.AuthID}
+	return u.userPreferenceRepo.CreateUserPreference(ctx, userPreference)
 }
 
 func (u *userUsecase) Login(c echo.Context, r *dto.LoginRequest) (*dto.LoginResponse, error) {

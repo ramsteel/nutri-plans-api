@@ -10,6 +10,7 @@ import (
 )
 
 type UserPreferenceRepository interface {
+	CreateUserPreference(ctx context.Context, userPreference *entities.UserPreference) error
 	UpdateUserPreference(ctx context.Context, userPreference *entities.UserPreference) error
 	GetUserPreference(ctx context.Context, id uuid.UUID) (*entities.UserPreference, error)
 }
@@ -22,6 +23,17 @@ func NewUserPreferenceRepository(db *gorm.DB) *userPreferenceRepository {
 	return &userPreferenceRepository{
 		db: db,
 	}
+}
+
+func (u *userPreferenceRepository) CreateUserPreference(
+	ctx context.Context,
+	userPreference *entities.UserPreference,
+) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	return u.db.Create(userPreference).Error
 }
 
 func (u *userPreferenceRepository) UpdateUserPreference(
