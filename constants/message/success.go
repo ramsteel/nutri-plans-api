@@ -26,6 +26,9 @@ const (
 	// meal types
 	MsgRetrieveMealTypesSuccess = "meal types retreived successfully"
 
+	// meals
+	MsgGetTodayMealSuccess = "today meal retreived successfully"
+
 	// external service
 	MsgRetrieveItemSuccess     = "item retreived successfully"
 	MsgGetItemNutritionSuccess = "item nutrition retreived successfully"

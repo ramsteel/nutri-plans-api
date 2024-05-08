@@ -51,6 +51,10 @@ const (
 	// meal types
 	MsgGetMealTypesFailed = "failed to get meal types"
 
+	// meals
+	MsgMealNotFound       = "meal not found"
+	MsgGetTodayMealFailed = "failed to get today meal"
+
 	// external services
 	MsgExternalServiceError   = "external service error"
 	MsgQueryMinimum           = "item must at least 3 characters"
