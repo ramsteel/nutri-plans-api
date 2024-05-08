@@ -48,6 +48,9 @@ const (
 	// dietary preference types
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
 
+	// meal types
+	MsgGetMealTypesFailed = "failed to get meal types"
+
 	// external services
 	MsgExternalServiceError   = "external service error"
 	MsgQueryMinimum           = "item must at least 3 characters"
