@@ -11,6 +11,7 @@ import (
 	httputil "nutri-plans-api/utils/http"
 	tokenutil "nutri-plans-api/utils/token"
 	valutil "nutri-plans-api/utils/validation"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -85,6 +86,15 @@ func (m *mealController) AddItemToMeal(c echo.Context) error {
 
 	err := m.mealUsecase.AddMeal(c, r, claims.UID)
 	if err != nil {
+
+		if errors.Is(err, context.Canceled) {
+			return httputil.HandleErrorResponse(
+				c,
+				httpconst.StatusClientCancelledRequest,
+				msgconst.MsgAddItemToMealFailed,
+			)
+		}
+
 		return httputil.HandleErrorResponse(
 			c,
 			http.StatusInternalServerError,
@@ -98,4 +108,59 @@ func (m *mealController) AddItemToMeal(c echo.Context) error {
 		msgconst.MsgAddItemToMealSuccess,
 		nil,
 	)
+}
+
+func (m *mealController) UpdateMealItem(c echo.Context) error {
+	claims := m.tokenUtil.GetClaims(c)
+
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	r := new(dto.MealItemRequest)
+	if err := c.Bind(r); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
+	}
+
+	if err := m.v.Validate(r); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	err = m.mealUsecase.UpdateMeal(c, r, claims.UID, uint64(intID))
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgMealNotFound
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgUpdateMealItemFailed
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgUpdateMealItemFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgUpdateMealItemSuccess, nil)
 }

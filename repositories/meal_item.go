@@ -15,6 +15,7 @@ type MealItemRepository interface {
 		id uuid.UUID,
 		start, end time.Time,
 	) (*entities.CalculatedNutrients, error)
+	GetMealItemByID(ctx context.Context, id uint64) (*entities.MealItem, error)
 }
 
 type mealItemRepository struct {
@@ -49,4 +50,20 @@ func (m *mealItemRepository) GetCalculatedNutrients(
 	}
 
 	return calculatedNutrients, nil
+}
+
+func (m *mealItemRepository) GetMealItemByID(
+	ctx context.Context,
+	id uint64,
+) (*entities.MealItem, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	mealItem := new(entities.MealItem)
+	if err := m.db.First(mealItem, id).Error; err != nil {
+		return nil, err
+	}
+
+	return mealItem, nil
 }

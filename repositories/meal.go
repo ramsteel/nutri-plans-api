@@ -13,6 +13,7 @@ import (
 type MealRepository interface {
 	GetTodayMeal(ctx context.Context, uid uuid.UUID, start, end time.Time) (*entities.Meal, error)
 	AddMeal(ctx context.Context, meal *entities.Meal) error
+	UpdateMeal(ctx context.Context, meal *entities.Meal) error
 }
 
 type mealRepository struct {
@@ -52,4 +53,12 @@ func (m *mealRepository) AddMeal(ctx context.Context, meal *entities.Meal) error
 	}
 
 	return m.db.Save(meal).Error
+}
+
+func (m *mealRepository) UpdateMeal(ctx context.Context, meal *entities.Meal) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	return m.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(meal).Error
 }
