@@ -23,6 +23,7 @@ func initMealRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	g.Use(echojwt.WithConfig(tokenutil.GetJwtConfig()))
 
 	g.GET("/today", mealController.GetTodayMeal)
-	g.POST("/item", mealController.AddItemToMeal)
-	g.PUT("/item/:id", mealController.UpdateMealItem)
+	g.POST("/items", mealController.AddItemToMeal)
+	g.PUT("/items/:id", mealController.UpdateMealItem)
+	// g.GET("/items/:id", mealController.GetMealItem)
 }
