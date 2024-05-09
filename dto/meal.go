@@ -1,6 +1,6 @@
 package dto
 
-type AddMealItemRequest struct {
+type MealItemRequest struct {
 	MealTypeID   uint     `json:"meal_type_id" validate:"required,min=1,max=4"`
 	ItemName     string   `json:"item_name" validate:"required"`
 	Qty          float32  `json:"qty" validate:"required,gt=0"`
