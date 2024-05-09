@@ -13,6 +13,7 @@ type MetadataResponse struct {
 }
 
 type SearchRequest struct {
-	Limit  int `json:"limit" validate:"required,gt=0"`
-	Offset int `json:"offset" validate:"required,gt=0"`
+	Item   string `json:"item" validate:"required,min=3"`
+	Limit  int    `json:"limit" validate:"required,gt=0"`
+	Offset *int   `json:"offset" validate:"required,gte=0"`
 }

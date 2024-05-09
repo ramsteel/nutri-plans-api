@@ -9,8 +9,7 @@ import (
 )
 
 type NutritionUsecase interface {
-	SearchItem(c echo.Context, itemName string, limit, offset int) (
-		*[]ex.Item, *dto.MetadataResponse, error)
+	SearchItem(c echo.Context, s *dto.SearchRequest) (*[]ex.Item, *dto.MetadataResponse, error)
 	GetItemNutrition(c echo.Context, r *dto.ItemNutritionRequest) (
 		*ex.ItemNutrition, error)
 }
@@ -27,39 +26,38 @@ func NewNutritionUsecase(nutrtionExternal ex.NutritionClient) *nutritionUsecase 
 
 func (n *nutritionUsecase) SearchItem(
 	c echo.Context,
-	itemName string,
-	limit, offset int,
+	s *dto.SearchRequest,
 ) (*[]ex.Item, *dto.MetadataResponse, error) {
 	ctx, cancel := context.WithCancel(c.Request().Context())
 	defer cancel()
 
-	items, err := n.nutrtionExternal.SearchItem(ctx, itemName)
+	items, err := n.nutrtionExternal.SearchItem(ctx, s.Item)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	items = n.filterItems(items)
 	totalData := len(*items)
-	if offset > totalData {
+	if *s.Offset > totalData {
 		defaultMetadata := &dto.MetadataResponse{
 			TotalData:   totalData,
 			TotalCount:  totalData,
 			NextOffset:  totalData,
-			HasLoadMore: totalData > offset+limit,
+			HasLoadMore: totalData > *s.Offset+s.Limit,
 		}
 		return &[]ex.Item{}, defaultMetadata, nil
 	}
 
-	if offset+limit > totalData {
-		limit = totalData - offset
+	if *s.Offset+s.Limit > totalData {
+		s.Limit = totalData - *s.Offset
 	}
 
-	filteredItems := (*items)[offset : offset+limit]
+	filteredItems := (*items)[*s.Offset : *s.Offset+s.Limit]
 	metadata := &dto.MetadataResponse{
 		TotalData:   totalData,
-		TotalCount:  offset + len(filteredItems),
-		NextOffset:  offset + limit,
-		HasLoadMore: totalData > offset+limit,
+		TotalCount:  *s.Offset + len(filteredItems),
+		NextOffset:  *s.Offset + s.Limit,
+		HasLoadMore: totalData > *s.Offset+s.Limit,
 	}
 
 	return &filteredItems, metadata, nil
