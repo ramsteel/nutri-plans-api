@@ -68,7 +68,6 @@ func (n *nutritionController) SearchItem(c echo.Context) error {
 
 	return httputil.HandleSearchResponse(
 		c,
-		http.StatusOK,
 		msgconst.MsgRetrieveItemSuccess,
 		res,
 		meta,
