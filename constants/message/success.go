@@ -32,6 +32,7 @@ const (
 	MsgUpdateMealItemSuccess = "meal item updated successfully"
 	MsgGetMealItemSuccess    = "meal item retreived successfully"
 	MsgDeleteMealItemSuccess = "meal item deleted successfully"
+	MsgGetMealsSuccess       = "meals retreived successfully"
 
 	// external service
 	MsgRetrieveItemSuccess     = "item retreived successfully"
