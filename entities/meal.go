@@ -9,7 +9,7 @@ import (
 
 type Meal struct {
 	ID     uuid.UUID `json:"-" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	UserID uuid.UUID `json:"-" gorm:"type:uuid"`
+	UserID uuid.UUID `json:"-" gorm:"type:uuid;index"`
 	User   User      `json:"-"`
 	CalculatedNutrients
 	MealItems []MealItem     `json:"meal_items"`
