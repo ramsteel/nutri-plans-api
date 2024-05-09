@@ -3,11 +3,14 @@ package usecases
 import (
 	"context"
 	"errors"
+	"fmt"
+	"math"
 	"nutri-plans-api/dto"
 	"nutri-plans-api/entities"
 	"nutri-plans-api/repositories"
 	dateutil "nutri-plans-api/utils/date"
 	errutil "nutri-plans-api/utils/error"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,6 +24,11 @@ type MealUsecase interface {
 	UpdateMeal(c echo.Context, r *dto.MealItemRequest, uid uuid.UUID, id uint64) error
 	GetMealItemByID(c echo.Context, uid uuid.UUID, id uint64) (*entities.MealItem, error)
 	DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) error
+	GetUserMeals(
+		c echo.Context,
+		uid uuid.UUID,
+		p *dto.PaginationRequest,
+	) (*[]entities.Meal, *dto.PaginationMetadata, *dto.Link, error)
 }
 
 type mealUsecase struct {
@@ -245,4 +253,55 @@ func (m *mealUsecase) DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) e
 	deleteTx.Commit()
 
 	return nil
+}
+
+func (m *mealUsecase) GetUserMeals(
+	c echo.Context,
+	uid uuid.UUID,
+	p *dto.PaginationRequest,
+) (*[]entities.Meal, *dto.PaginationMetadata, *dto.Link, error) {
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	baseURL := fmt.Sprintf(
+		"%s?limit=%d&page=",
+		c.Request().URL.Path,
+		p.Limit,
+	)
+
+	var (
+		next = baseURL + strconv.Itoa(p.Page+1)
+		prev = baseURL + strconv.Itoa(p.Page-1)
+	)
+
+	meals, totalData, err := m.mealRepo.GetUserMeals(ctx, uid, p)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	totalPage := int(math.Ceil(float64(totalData) / float64(p.Limit)))
+	meta := &dto.PaginationMetadata{
+		CurrentPage: p.Page,
+		TotalPage:   totalPage,
+		TotalData:   totalData,
+	}
+
+	if p.Page > totalPage {
+		return nil, nil, nil, errutil.ErrPageNotFound
+	}
+
+	if p.Page == 1 {
+		prev = ""
+	}
+
+	if p.Page == totalPage {
+		next = ""
+	}
+
+	link := &dto.Link{
+		Next: next,
+		Prev: prev,
+	}
+
+	return meals, meta, link, nil
 }

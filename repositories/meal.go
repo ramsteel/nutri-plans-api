@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"nutri-plans-api/dto"
 	"nutri-plans-api/entities"
 	structconvutil "nutri-plans-api/utils/structconv"
 	"time"
@@ -15,6 +16,11 @@ type MealRepository interface {
 	GetTodayMeal(ctx context.Context, uid uuid.UUID, start, end time.Time) (*entities.Meal, error)
 	AddMeal(ctx context.Context, meal *entities.Meal) error
 	UpdateMeal(ctx context.Context, meal *entities.Meal) error
+	GetUserMeals(
+		ctx context.Context,
+		uid uuid.UUID,
+		p *dto.PaginationRequest,
+	) (*[]entities.Meal, int64, error)
 }
 
 type mealRepository struct {
@@ -66,4 +72,42 @@ func (m *mealRepository) UpdateMeal(ctx context.Context, meal *entities.Meal) er
 	return m.db.Session(&gorm.Session{FullSaveAssociations: true}).
 		Updates(meal).
 		Updates(mapCalcNutrients).Error
+}
+
+func (m *mealRepository) GetUserMeals(
+	ctx context.Context,
+	uid uuid.UUID,
+	p *dto.PaginationRequest,
+) (*[]entities.Meal, int64, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	offset := (p.Page - 1) * p.Limit
+
+	meals := new([]entities.Meal)
+	tx := m.selectQuery(p.From, p.To)
+	res := tx.Limit(p.Limit).
+		Offset(offset).
+		Find(meals, "user_id = ?", uid).
+		Offset(-1).
+		Find(&[]entities.Meal{})
+	if res.Error != nil {
+		return nil, 0, res.Error
+	}
+
+	return meals, res.RowsAffected, nil
+}
+
+func (m *mealRepository) selectQuery(from, to *time.Time) *gorm.DB {
+	tx := m.db.Preload("MealItems.MealType").Preload(clause.Associations)
+	if from == nil && to == nil {
+		return tx
+	} else if from == nil {
+		return tx.Where("created_at <= ?", to)
+	} else if to == nil {
+		return tx.Where("created_at >= ?", from)
+	} else {
+		return tx.Where("created_at BETWEEN ? AND ?", from, to)
+	}
 }
