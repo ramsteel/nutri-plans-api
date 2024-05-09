@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"nutri-plans-api/entities"
+	structconvutil "nutri-plans-api/utils/structconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -60,5 +61,9 @@ func (m *mealRepository) UpdateMeal(ctx context.Context, meal *entities.Meal) er
 		return err
 	}
 
-	return m.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(meal).Error
+	mapCalcNutrients := structconvutil.ToMap(meal.CalculatedNutrients)
+
+	return m.db.Session(&gorm.Session{FullSaveAssociations: true}).
+		Updates(meal).
+		Updates(mapCalcNutrients).Error
 }
