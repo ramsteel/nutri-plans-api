@@ -66,7 +66,7 @@ func (m *mealController) GetTodayMeal(c echo.Context) error {
 func (m *mealController) AddItemToMeal(c echo.Context) error {
 	claims := m.tokenUtil.GetClaims(c)
 
-	r := new(dto.AddMealItemRequest)
+	r := new(dto.MealItemRequest)
 	if err := c.Bind(r); err != nil {
 		return httputil.HandleErrorResponse(
 			c,
@@ -92,5 +92,10 @@ func (m *mealController) AddItemToMeal(c echo.Context) error {
 		)
 	}
 
-	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgAddItemToMealSuccess, nil)
+	return httputil.HandleSuccessResponse(
+		c,
+		http.StatusCreated,
+		msgconst.MsgAddItemToMealSuccess,
+		nil,
+	)
 }
