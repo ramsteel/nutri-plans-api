@@ -19,4 +19,7 @@ var (
 
 	// forbidden
 	ErrForbiddenResource = errors.New(msgconst.MsgForbiddenResource)
+
+	// pages
+	ErrPageNotFound = errors.New(msgconst.MsgPageNotFound)
 )
