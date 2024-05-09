@@ -59,6 +59,9 @@ const (
 	MsgMealItemNotFound     = "meal item not found"
 	MsgGetMealItemFailed    = "failed to get meal item"
 
+	// forbidden
+	MsgForbiddenResource = "forbidden resource"
+
 	// external services
 	MsgExternalServiceError   = "external service error"
 	MsgQueryMinimum           = "item must at least 3 characters"

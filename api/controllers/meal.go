@@ -8,6 +8,7 @@ import (
 	msgconst "nutri-plans-api/constants/message"
 	"nutri-plans-api/dto"
 	"nutri-plans-api/usecases"
+	errutil "nutri-plans-api/utils/error"
 	httputil "nutri-plans-api/utils/http"
 	tokenutil "nutri-plans-api/utils/token"
 	valutil "nutri-plans-api/utils/validation"
@@ -148,6 +149,9 @@ func (m *mealController) UpdateMealItem(c echo.Context) error {
 		)
 
 		switch {
+		case errors.Is(err, errutil.ErrForbiddenResource):
+			code = http.StatusForbidden
+			msg = msgconst.MsgForbiddenResource
 		case errors.Is(err, gorm.ErrRecordNotFound):
 			code = http.StatusNotFound
 			msg = msgconst.MsgMealNotFound
@@ -166,6 +170,8 @@ func (m *mealController) UpdateMealItem(c echo.Context) error {
 }
 
 func (m *mealController) GetMealItemByID(c echo.Context) error {
+	claims := m.tokenUtil.GetClaims(c)
+
 	id := c.Param("id")
 	intID, err := strconv.Atoi(id)
 	if err != nil {
@@ -176,7 +182,7 @@ func (m *mealController) GetMealItemByID(c echo.Context) error {
 		)
 	}
 
-	item, err := m.mealUsecase.GetMealItemByID(c, uint64(intID))
+	item, err := m.mealUsecase.GetMealItemByID(c, claims.UID, uint64(intID))
 	if err != nil {
 		var (
 			code int
@@ -184,6 +190,9 @@ func (m *mealController) GetMealItemByID(c echo.Context) error {
 		)
 
 		switch {
+		case errors.Is(err, errutil.ErrForbiddenResource):
+			code = http.StatusForbidden
+			msg = msgconst.MsgForbiddenResource
 		case errors.Is(err, gorm.ErrRecordNotFound):
 			code = http.StatusNotFound
 			msg = msgconst.MsgMealItemNotFound
@@ -199,4 +208,8 @@ func (m *mealController) GetMealItemByID(c echo.Context) error {
 	}
 
 	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgGetMealItemSuccess, item)
+}
+
+func (m *mealController) DeleteMealItem(c echo.Context) error {
+	return nil
 }

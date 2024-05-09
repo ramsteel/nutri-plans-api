@@ -7,6 +7,7 @@ import (
 	"nutri-plans-api/entities"
 	"nutri-plans-api/repositories"
 	dateutil "nutri-plans-api/utils/date"
+	errutil "nutri-plans-api/utils/error"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -17,7 +18,7 @@ type MealUsecase interface {
 	GetTodayMeal(c echo.Context, uid uuid.UUID) (*entities.Meal, error)
 	AddMeal(c echo.Context, r *dto.MealItemRequest, uid uuid.UUID) error
 	UpdateMeal(c echo.Context, r *dto.MealItemRequest, uid uuid.UUID, id uint64) error
-	GetMealItemByID(c echo.Context, id uint64) (*entities.MealItem, error)
+	GetMealItemByID(c echo.Context, uid uuid.UUID, id uint64) (*entities.MealItem, error)
 }
 
 type mealUsecase struct {
@@ -134,6 +135,10 @@ func (m *mealUsecase) UpdateMeal(
 		return err
 	}
 
+	if todayMeal.UserID != uid {
+		return errutil.ErrForbiddenResource
+	}
+
 	mealItem, err := m.mealItemRepo.GetMealItemByID(ctx, id)
 	if err != nil {
 		return err
@@ -179,9 +184,22 @@ func (m *mealUsecase) UpdateMeal(
 	return m.mealRepo.UpdateMeal(ctx, meal)
 }
 
-func (m *mealUsecase) GetMealItemByID(c echo.Context, id uint64) (*entities.MealItem, error) {
+func (m *mealUsecase) GetMealItemByID(
+	c echo.Context,
+	uid uuid.UUID,
+	id uint64,
+) (*entities.MealItem, error) {
 	ctx, cancel := context.WithCancel(c.Request().Context())
 	defer cancel()
+
+	todayMeal, err := m.GetTodayMeal(c, uid)
+	if err != nil {
+		return nil, err
+	}
+
+	if todayMeal.UserID != uid {
+		return nil, errutil.ErrForbiddenResource
+	}
 
 	return m.mealItemRepo.GetMealItemByID(ctx, id)
 }
