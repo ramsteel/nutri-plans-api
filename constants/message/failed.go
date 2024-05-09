@@ -58,6 +58,7 @@ const (
 	MsgUpdateMealItemFailed = "failed to update meal item"
 	MsgMealItemNotFound     = "meal item not found"
 	MsgGetMealItemFailed    = "failed to get meal item"
+	MsgDeleteMealItemFailed = "failed to delete meal item"
 
 	// forbidden
 	MsgForbiddenResource = "forbidden resource"

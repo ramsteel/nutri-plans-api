@@ -31,6 +31,7 @@ const (
 	MsgAddItemToMealSuccess  = "item added to meal successfully"
 	MsgUpdateMealItemSuccess = "meal item updated successfully"
 	MsgGetMealItemSuccess    = "meal item retreived successfully"
+	MsgDeleteMealItemSuccess = "meal item deleted successfully"
 
 	// external service
 	MsgRetrieveItemSuccess     = "item retreived successfully"
