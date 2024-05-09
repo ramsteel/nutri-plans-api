@@ -8,6 +8,7 @@ import (
 	"nutri-plans-api/repositories"
 	dateutil "nutri-plans-api/utils/date"
 	errutil "nutri-plans-api/utils/error"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -19,6 +20,7 @@ type MealUsecase interface {
 	AddMeal(c echo.Context, r *dto.MealItemRequest, uid uuid.UUID) error
 	UpdateMeal(c echo.Context, r *dto.MealItemRequest, uid uuid.UUID, id uint64) error
 	GetMealItemByID(c echo.Context, uid uuid.UUID, id uint64) (*entities.MealItem, error)
+	DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) error
 }
 
 type mealUsecase struct {
@@ -202,4 +204,45 @@ func (m *mealUsecase) GetMealItemByID(
 	}
 
 	return m.mealItemRepo.GetMealItemByID(ctx, id)
+}
+
+func (m *mealUsecase) DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) error {
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	todayMeal, err := m.GetTodayMeal(c, uid)
+	if err != nil {
+		return err
+	}
+
+	if todayMeal.UserID != uid {
+		return errutil.ErrForbiddenResource
+	}
+
+	mealItem, deleteTx, err := m.mealItemRepo.DeleteMealItem(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	time.Sleep(2 * time.Second)
+	err = m.mealRepo.UpdateMeal(ctx, &entities.Meal{
+		ID:     todayMeal.ID,
+		UserID: uid,
+		CalculatedNutrients: entities.CalculatedNutrients{
+			TotalCalories:     todayMeal.TotalCalories - mealItem.Calories,
+			TotalCarbohydrate: todayMeal.TotalCarbohydrate - mealItem.Carbohydrate,
+			TotalProtein:      todayMeal.TotalProtein - mealItem.Protein,
+			TotalFat:          todayMeal.TotalFat - mealItem.Fat,
+			TotalCholesterol:  todayMeal.TotalCholesterol - mealItem.Cholesterol,
+			TotalSugars:       todayMeal.TotalSugars - mealItem.Sugars,
+		},
+	})
+	if err != nil {
+		deleteTx.Rollback()
+		return err
+	}
+
+	deleteTx.Commit()
+
+	return nil
 }

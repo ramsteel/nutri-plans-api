@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type MealItemRepository interface {
@@ -16,6 +17,7 @@ type MealItemRepository interface {
 		start, end time.Time,
 	) (*entities.CalculatedNutrients, error)
 	GetMealItemByID(ctx context.Context, id uint64) (*entities.MealItem, error)
+	DeleteMealItem(ctx context.Context, id uint64) (*entities.MealItem, *gorm.DB, error)
 }
 
 type mealItemRepository struct {
@@ -66,4 +68,20 @@ func (m *mealItemRepository) GetMealItemByID(
 	}
 
 	return mealItem, nil
+}
+
+func (m *mealItemRepository) DeleteMealItem(
+	ctx context.Context,
+	id uint64,
+) (*entities.MealItem, *gorm.DB, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	tx := m.db.Begin()
+
+	mealItem := &entities.MealItem{ID: id}
+	err := tx.Clauses(clause.Returning{}).Delete(mealItem).Error
+
+	return mealItem, tx, err
 }

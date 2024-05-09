@@ -211,5 +211,42 @@ func (m *mealController) GetMealItemByID(c echo.Context) error {
 }
 
 func (m *mealController) DeleteMealItem(c echo.Context) error {
-	return nil
+	claims := m.tokenUtil.GetClaims(c)
+
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	err = m.mealUsecase.DeleteMealItem(c, claims.UID, uint64(intID))
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, errutil.ErrForbiddenResource):
+			code = http.StatusForbidden
+			msg = msgconst.MsgForbiddenResource
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgMealItemNotFound
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgDeleteMealItemFailed
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgDeleteMealItemFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgDeleteMealItemSuccess, nil)
 }
