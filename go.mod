@@ -9,6 +9,8 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-jwt/v4 v4.2.0
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/robfig/cron v1.2.0
+	github.com/sashabaranov/go-openai v1.23.1
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto v0.22.0
 	gorm.io/driver/postgres v1.5.7
