@@ -15,6 +15,8 @@ func Init(e *echo.Echo, db *gorm.DB, v *valutil.Validator) {
 	drinkTypeRoute := e.Group("/drink-types")
 	dietaryPreferenceTypeRoute := e.Group("/dietary-preference-types")
 	nutritionRoute := e.Group("/nutrition")
+	mealTypeRoute := e.Group("/meal-types")
+	mealRoute := e.Group("/meals")
 
 	initUserRoute(userRoute, db, v)
 	initUserPreferenceRoute(userPreference, db, v)
@@ -22,5 +24,7 @@ func Init(e *echo.Echo, db *gorm.DB, v *valutil.Validator) {
 	initFoodTypeRoute(foodTypeRoute, db)
 	initDrinkTypeRoute(drinkTypeRoute, db)
 	initDietaryPreferenceTypeRoute(dietaryPreferenceTypeRoute, db)
-	initNutritionRoute(nutritionRoute)
+	initNutritionRoute(nutritionRoute, v)
+	initMealTypeRoute(mealTypeRoute, db)
+	initMealRoute(mealRoute, db, v)
 }

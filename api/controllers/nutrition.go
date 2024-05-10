@@ -10,6 +10,7 @@ import (
 	"nutri-plans-api/usecases"
 	errutil "nutri-plans-api/utils/error"
 	httputil "nutri-plans-api/utils/http"
+	valutil "nutri-plans-api/utils/validation"
 	"strconv"
 	"strings"
 
@@ -18,11 +19,17 @@ import (
 
 type nutritionController struct {
 	nutritionUsecase usecases.NutritionUsecase
+
+	v *valutil.Validator
 }
 
-func NewNutritionController(nutritionUsecase usecases.NutritionUsecase) *nutritionController {
+func NewNutritionController(
+	nutritionUsecase usecases.NutritionUsecase,
+	v *valutil.Validator,
+) *nutritionController {
 	return &nutritionController{
 		nutritionUsecase: nutritionUsecase,
+		v:                v,
 	}
 }
 
@@ -35,8 +42,21 @@ func (n *nutritionController) SearchItem(c echo.Context) error {
 		return httputil.HandleErrorResponse(c, http.StatusBadRequest, msgconst.MsgQueryMinimum)
 	}
 
-	intOffset, intLimit, ok := n.parseQuery(offset, limit)
-	if !ok {
+	intOffset, intLimit, err := n.parseQuery(offset, limit)
+	if err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
+	}
+
+	s := &dto.SearchRequest{
+		Limit:  intLimit,
+		Offset: &intOffset,
+		Item:   item,
+	}
+	if err := n.v.Validate(s); err != nil {
 		return httputil.HandleErrorResponse(
 			c,
 			http.StatusBadRequest,
@@ -44,7 +64,7 @@ func (n *nutritionController) SearchItem(c echo.Context) error {
 		)
 	}
 
-	res, meta, err := n.nutritionUsecase.SearchItem(c, item, intLimit, intOffset)
+	res, meta, err := n.nutritionUsecase.SearchItem(c, s)
 	if err != nil {
 		var (
 			code int
@@ -68,7 +88,6 @@ func (n *nutritionController) SearchItem(c echo.Context) error {
 
 	return httputil.HandleSearchResponse(
 		c,
-		http.StatusOK,
 		msgconst.MsgRetrieveItemSuccess,
 		res,
 		meta,
@@ -114,7 +133,7 @@ func (n *nutritionController) GetItemNutrition(c echo.Context) error {
 	)
 }
 
-func (n *nutritionController) parseQuery(offset, limit string) (int, int, bool) {
+func (n *nutritionController) parseQuery(offset, limit string) (int, int, error) {
 	if strings.TrimSpace(limit) == "" {
 		limit = "10"
 	}
@@ -125,15 +144,15 @@ func (n *nutritionController) parseQuery(offset, limit string) (int, int, bool) 
 
 	intOffset, err := strconv.Atoi(offset)
 	if err != nil {
-		return 0, 0, false
+		return 0, 0, err
 	}
 
 	intLimit, err := strconv.Atoi(limit)
 	if err != nil {
-		return 0, 0, false
+		return 0, 0, err
 	}
 
-	return intOffset, intLimit, true
+	return intOffset, intLimit, nil
 }
 
 func (n *nutritionController) isValidItem(item string) bool {

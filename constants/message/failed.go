@@ -48,6 +48,23 @@ const (
 	// dietary preference types
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
 
+	// meal types
+	MsgGetMealTypesFailed = "failed to get meal types"
+
+	// meals
+	MsgMealNotFound         = "meal not found"
+	MsgGetTodayMealFailed   = "failed to get today meal"
+	MsgAddItemToMealFailed  = "failed to add item to meal"
+	MsgUpdateMealItemFailed = "failed to update meal item"
+	MsgMealItemNotFound     = "meal item not found"
+	MsgGetMealItemFailed    = "failed to get meal item"
+	MsgDeleteMealItemFailed = "failed to delete meal item"
+	MsgGetMealsFailed       = "failed to get meals"
+	MsgPageNotFound         = "page not found"
+
+	// forbidden
+	MsgForbiddenResource = "forbidden resource"
+
 	// external services
 	MsgExternalServiceError   = "external service error"
 	MsgQueryMinimum           = "item must at least 3 characters"

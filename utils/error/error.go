@@ -16,4 +16,10 @@ var (
 	// external services
 	ErrExternalService = errors.New(msgconst.MsgExternalServiceError)
 	ErrItemNotFound    = errors.New(msgconst.MsgItemNotFound)
+
+	// forbidden
+	ErrForbiddenResource = errors.New(msgconst.MsgForbiddenResource)
+
+	// pages
+	ErrPageNotFound = errors.New(msgconst.MsgPageNotFound)
 )

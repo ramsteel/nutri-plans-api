@@ -23,6 +23,17 @@ const (
 	// dietary preference types
 	MsgRetrieveDietaryPreferenceTypesSuccess = "dietary preference types retreived successfully"
 
+	// meal types
+	MsgRetrieveMealTypesSuccess = "meal types retreived successfully"
+
+	// meals
+	MsgGetTodayMealSuccess   = "today meal retreived successfully"
+	MsgAddItemToMealSuccess  = "item added to meal successfully"
+	MsgUpdateMealItemSuccess = "meal item updated successfully"
+	MsgGetMealItemSuccess    = "meal item retreived successfully"
+	MsgDeleteMealItemSuccess = "meal item deleted successfully"
+	MsgGetMealsSuccess       = "meals retreived successfully"
+
 	// external service
 	MsgRetrieveItemSuccess     = "item retreived successfully"
 	MsgGetItemNutritionSuccess = "item nutrition retreived successfully"
