@@ -76,6 +76,7 @@ func migrate(db *gorm.DB) {
 	db.AutoMigrate(&entities.UserPreference{}, &entities.DietaryRestriction{}) // user preference
 	db.AutoMigrate(&entities.MealType{})                                       // meal types
 	db.AutoMigrate(&entities.Meal{}, &entities.MealItem{})                     // meal and meal item
+	db.AutoMigrate(&entities.Recommendation{})                                 // recommendation
 }
 
 func seed(db *gorm.DB) {

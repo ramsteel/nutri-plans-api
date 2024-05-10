@@ -17,6 +17,7 @@ type UserPreference struct {
 	DietaryPreferenceTypeID *uint                  `json:"-" gorm:"default:null"`
 	DietaryPreferenceType   *DietaryPreferenceType `json:"dietary_preference_type"`
 	DietaryRestrictions     *[]DietaryRestriction  `json:"dietary_restrictions"`
+	Recommendations         *[]Recommendation      `json:"-"`
 	CreatedAt               time.Time              `json:"-"`
 	UpdatedAt               time.Time              `json:"-"`
 	DeletedAt               gorm.DeletedAt         `json:"-" gorm:"index"`

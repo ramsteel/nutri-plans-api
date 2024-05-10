@@ -34,6 +34,9 @@ const (
 	MsgDeleteMealItemSuccess = "meal item deleted successfully"
 	MsgGetMealsSuccess       = "meals retreived successfully"
 
+	// recommendation
+	MsgGetRecommendationSuccess = "recommendation retreived successfully"
+
 	// external service
 	MsgRetrieveItemSuccess     = "item retreived successfully"
 	MsgGetItemNutritionSuccess = "item nutrition retreived successfully"

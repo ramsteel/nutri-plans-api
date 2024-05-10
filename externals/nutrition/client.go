@@ -13,6 +13,10 @@ import (
 type NutritionClient interface {
 	SearchItem(ctx context.Context, name string) (*[]Item, error)
 	GetItemNutrition(ctx context.Context, r *dto.ItemNutritionRequest) (*ItemNutrition, error)
+	GetMultipleItemNutritions(
+		ctx context.Context,
+		r *dto.ItemNutritionRequest,
+	) (*[]ItemNutrition, error)
 }
 
 type nutritionClient struct {
@@ -62,6 +66,18 @@ func (n *nutritionClient) GetItemNutrition(
 	ctx context.Context,
 	r *dto.ItemNutritionRequest,
 ) (*ItemNutrition, error) {
+	nutritionRes, err := n.getItemNutrition(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return &(*nutritionRes.Foods)[0], nil
+}
+
+func (n *nutritionClient) getItemNutrition(
+	ctx context.Context,
+	r *dto.ItemNutritionRequest,
+) (*NutritionResponse, error) {
 	url := "https://trackapi.nutritionix.com/v2/natural/nutrients"
 
 	strReq, err := json.Marshal(r)
@@ -97,5 +113,17 @@ func (n *nutritionClient) GetItemNutrition(
 		return nil, err
 	}
 
-	return &(*nutritionRes.Foods)[0], nil
+	return nutritionRes, nil
+}
+
+func (n *nutritionClient) GetMultipleItemNutritions(
+	ctx context.Context,
+	r *dto.ItemNutritionRequest,
+) (*[]ItemNutrition, error) {
+	nutritionRes, err := n.getItemNutrition(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return (*nutritionRes).Foods, nil
 }

@@ -34,6 +34,36 @@ func (_m *MockUserPreferenceRepository) CreateUserPreference(ctx context.Context
 	return r0
 }
 
+// GetAllUserPreferences provides a mock function with given fields: ctx
+func (_m *MockUserPreferenceRepository) GetAllUserPreferences(ctx context.Context) (*[]entities.UserPreference, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllUserPreferences")
+	}
+
+	var r0 *[]entities.UserPreference
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (*[]entities.UserPreference, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) *[]entities.UserPreference); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]entities.UserPreference)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetUserPreference provides a mock function with given fields: ctx, id
 func (_m *MockUserPreferenceRepository) GetUserPreference(ctx context.Context, id uuid.UUID) (*entities.UserPreference, error) {
 	ret := _m.Called(ctx, id)
