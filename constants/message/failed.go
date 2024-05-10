@@ -62,6 +62,9 @@ const (
 	MsgGetMealsFailed       = "failed to get meals"
 	MsgPageNotFound         = "page not found"
 
+	// recommendation
+	MsgGetRecommendationFailed = "failed to get recommendation"
+
 	// forbidden
 	MsgForbiddenResource = "forbidden resource"
 
