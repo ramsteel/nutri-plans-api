@@ -44,7 +44,9 @@ func (u *userPreferenceRepository) UpdateUserPreference(
 		return err
 	}
 
-	return u.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(userPreference).Error
+	return u.db.Session(&gorm.Session{FullSaveAssociations: true}).
+		Updates(userPreference).
+		Save(userPreference).Error
 }
 
 func (u *userPreferenceRepository) GetUserPreference(
