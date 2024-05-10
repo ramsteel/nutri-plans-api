@@ -13,6 +13,7 @@ type UserPreferenceRepository interface {
 	CreateUserPreference(ctx context.Context, userPreference *entities.UserPreference) error
 	UpdateUserPreference(ctx context.Context, userPreference *entities.UserPreference) error
 	GetUserPreference(ctx context.Context, id uuid.UUID) (*entities.UserPreference, error)
+	GetAllUserPreferences(ctx context.Context) (*[]entities.UserPreference, error)
 }
 
 type userPreferenceRepository struct {
@@ -64,4 +65,19 @@ func (u *userPreferenceRepository) GetUserPreference(
 	}
 
 	return userPreference, nil
+}
+
+func (u *userPreferenceRepository) GetAllUserPreferences(
+	ctx context.Context,
+) (*[]entities.UserPreference, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	userPreferences := new([]entities.UserPreference)
+	if err := u.db.Preload(clause.Associations).Find(userPreferences).Error; err != nil {
+		return nil, err
+	}
+
+	return userPreferences, nil
 }
