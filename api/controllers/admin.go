@@ -19,9 +19,10 @@ import (
 )
 
 type adminController struct {
-	adminUsecase     usecases.AdminUsecase
-	foodTypeUsecase  usecases.FoodTypeUsecase
-	drinkTypeUsecase usecases.DrinkTypeUsecase
+	adminUsecase                 usecases.AdminUsecase
+	foodTypeUsecase              usecases.FoodTypeUsecase
+	drinkTypeUsecase             usecases.DrinkTypeUsecase
+	dietaryPreferenceTypeUsecase usecases.DietaryPreferenceTypeUsecase
 
 	tokenUtil tokenutil.TokenUtil
 	v         *valutil.Validator
@@ -31,18 +32,21 @@ func NewAdminController(
 	adminUsecase usecases.AdminUsecase,
 	foodTypeUsecase usecases.FoodTypeUsecase,
 	drinkTypeUsecase usecases.DrinkTypeUsecase,
+	dietaryPreferenceTypeUsecase usecases.DietaryPreferenceTypeUsecase,
 	tokenUtil tokenutil.TokenUtil,
 	v *valutil.Validator,
 ) *adminController {
 	return &adminController{
-		adminUsecase:     adminUsecase,
-		foodTypeUsecase:  foodTypeUsecase,
-		drinkTypeUsecase: drinkTypeUsecase,
-		tokenUtil:        tokenUtil,
-		v:                v,
+		adminUsecase:                 adminUsecase,
+		foodTypeUsecase:              foodTypeUsecase,
+		drinkTypeUsecase:             drinkTypeUsecase,
+		dietaryPreferenceTypeUsecase: dietaryPreferenceTypeUsecase,
+		tokenUtil:                    tokenUtil,
+		v:                            v,
 	}
 }
 
+// admin
 func (a *adminController) GetAdminProfile(c echo.Context) error {
 	claims := a.tokenUtil.GetClaims(c)
 
@@ -71,6 +75,7 @@ func (a *adminController) GetAdminProfile(c echo.Context) error {
 	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgGetAdminProfileSuccess, res)
 }
 
+// food types
 func (a *adminController) CreateFoodType(c echo.Context) error {
 	req := new(dto.FoodTypeRequest)
 	if err := c.Bind(req); err != nil {
@@ -221,6 +226,7 @@ func (a *adminController) DeleteFoodType(c echo.Context) error {
 	)
 }
 
+// drink types
 func (a *adminController) CreateDrinkType(c echo.Context) error {
 	req := new(dto.DrinkTypeRequest)
 	if err := c.Bind(req); err != nil {
@@ -367,6 +373,157 @@ func (a *adminController) DeleteDrinkType(c echo.Context) error {
 		c,
 		http.StatusOK,
 		msgconst.MsgDeleteDrinkTypeSuccess,
+		nil,
+	)
+}
+
+// dietary preference types
+func (a *adminController) CreateDietaryPreferenceType(c echo.Context) error {
+	req := new(dto.DietaryPreferenceTypeRequest)
+	if err := c.Bind(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
+	}
+
+	if err := a.v.Validate(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	err := a.dietaryPreferenceTypeUsecase.CreateDietaryPreferenceType(c, req)
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgCreateDietaryPrefTypeFailed
+		case errors.Is(err, gorm.ErrDuplicatedKey):
+			code = http.StatusConflict
+			msg = msgconst.MsgDietaryPrefTypeExist
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgCreateDietaryPrefTypeFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(
+		c,
+		http.StatusCreated,
+		msgconst.MsgCreateDietaryPrefTypeSuccess,
+		nil,
+	)
+}
+
+func (a *adminController) UpdateDietaryPreferenceType(c echo.Context) error {
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	req := new(dto.DietaryPreferenceTypeRequest)
+	if err := c.Bind(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgMismatchedDataType,
+		)
+	}
+
+	if err := a.v.Validate(req); err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	err = a.dietaryPreferenceTypeUsecase.UpdateDietaryPreferenceType(c, req, uint(intID))
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgDietaryPrefTypeNotFound
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgUpdateDietaryPrefTypeFailed
+		case errors.Is(err, gorm.ErrDuplicatedKey):
+			code = http.StatusConflict
+			msg = msgconst.MsgDietaryPrefTypeExist
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgUpdateDietaryPrefTypeFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(
+		c,
+		http.StatusOK,
+		msgconst.MsgUpdateDietaryPrefTypeSuccess,
+		nil,
+	)
+}
+
+func (a *adminController) DeleteDietaryPreferenceType(c echo.Context) error {
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	err = a.dietaryPreferenceTypeUsecase.DeleteDietaryPreferenceType(c, uint(intID))
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgDietaryPrefTypeNotFound
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgDeleteDietaryPrefTypeFailed
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgDeleteDietaryPrefTypeFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(
+		c,
+		http.StatusOK,
+		msgconst.MsgDeleteDietaryPrefTypeSuccess,
 		nil,
 	)
 }

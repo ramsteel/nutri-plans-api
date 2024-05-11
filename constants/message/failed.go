@@ -57,6 +57,11 @@ const (
 
 	// dietary preference types
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
+	MsgCreateDietaryPrefTypeFailed     = "failed to create dietary preference type"
+	MsgDietaryPrefTypeExist            = "dietary preference type already exist"
+	MsgDietaryPrefTypeNotFound         = "dietary preference type not found"
+	MsgUpdateDietaryPrefTypeFailed     = "failed to update dietary preference type"
+	MsgDeleteDietaryPrefTypeFailed     = "failed to delete dietary preference type"
 
 	// meal types
 	MsgGetMealTypesFailed = "failed to get meal types"

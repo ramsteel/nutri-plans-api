@@ -28,6 +28,9 @@ const (
 
 	// dietary preference types
 	MsgRetrieveDietaryPreferenceTypesSuccess = "dietary preference types retreived successfully"
+	MsgCreateDietaryPrefTypeSuccess          = "dietary preference type created successfully"
+	MsgUpdateDietaryPrefTypeSuccess          = "dietary preference type updated successfully"
+	MsgDeleteDietaryPrefTypeSuccess          = "dietary preference type deleted successfully"
 
 	// meal types
 	MsgRetrieveMealTypesSuccess = "meal types retreived successfully"
