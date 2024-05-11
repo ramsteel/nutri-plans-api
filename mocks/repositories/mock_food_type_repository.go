@@ -14,6 +14,42 @@ type MockFoodTypeRepository struct {
 	mock.Mock
 }
 
+// CreateFoodType provides a mock function with given fields: ctx, foodType
+func (_m *MockFoodTypeRepository) CreateFoodType(ctx context.Context, foodType *entities.FoodType) error {
+	ret := _m.Called(ctx, foodType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateFoodType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.FoodType) error); ok {
+		r0 = rf(ctx, foodType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteFoodType provides a mock function with given fields: ctx, id
+func (_m *MockFoodTypeRepository) DeleteFoodType(ctx context.Context, id uint) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteFoodType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetFoodTypes provides a mock function with given fields: ctx
 func (_m *MockFoodTypeRepository) GetFoodTypes(ctx context.Context) (*[]entities.FoodType, error) {
 	ret := _m.Called(ctx)
@@ -42,6 +78,24 @@ func (_m *MockFoodTypeRepository) GetFoodTypes(ctx context.Context) (*[]entities
 	}
 
 	return r0, r1
+}
+
+// UpdateFoodType provides a mock function with given fields: ctx, foodType
+func (_m *MockFoodTypeRepository) UpdateFoodType(ctx context.Context, foodType *entities.FoodType) error {
+	ret := _m.Called(ctx, foodType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateFoodType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.FoodType) error); ok {
+		r0 = rf(ctx, foodType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewMockFoodTypeRepository creates a new instance of MockFoodTypeRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
