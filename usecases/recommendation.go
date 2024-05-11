@@ -64,7 +64,7 @@ func (r *recommendationUsecase) GetRecommendation(
 		return nil, err
 	}
 
-	query := recutil.ToString(recommendations)
+	query := recutil.ToString(recommendations, false)
 	req := &dto.ItemNutritionRequest{
 		Query: query[0],
 	}
@@ -81,7 +81,8 @@ func (r *recommendationUsecase) fetchOpenAIRecommendation() {
 	preferences, _ := r.userPrefRepo.GetAllUserPreferences(ctx)
 	for _, pref := range *preferences {
 		prompt := prompt.GetRecommendationPrompt(&pref)
-		res, err := r.oaiExternal.GetRecommendation(prompt, recutil.ToString(pref.Recommendations))
+		res, err := r.oaiExternal.GetRecommendation(
+			prompt, recutil.ToString(pref.Recommendations, true))
 		if err == nil {
 			recommendations := recutil.ToStruct(res, pref.UserID)
 			r.recommendationRepo.CreateRecommendations(ctx, recommendations)
