@@ -37,6 +37,9 @@ const (
 	// recommendation
 	MsgGetRecommendationSuccess = "recommendation retreived successfully"
 
+	// admin
+	MsgGetAdminProfileSuccess = "admin profile retreived successfully"
+
 	// external service
 	MsgRetrieveItemSuccess     = "item retreived successfully"
 	MsgGetItemNutritionSuccess = "item nutrition retreived successfully"

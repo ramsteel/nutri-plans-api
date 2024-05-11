@@ -65,6 +65,10 @@ const (
 	// recommendation
 	MsgGetRecommendationFailed = "failed to get recommendation"
 
+	// admin
+	MsgAdminNotFound         = "admin not found"
+	MsgGetAdminProfileFailed = "failed to get admin profile"
+
 	// forbidden
 	MsgForbiddenResource = "forbidden resource"
 
