@@ -23,6 +23,7 @@ type adminController struct {
 	foodTypeUsecase              usecases.FoodTypeUsecase
 	drinkTypeUsecase             usecases.DrinkTypeUsecase
 	dietaryPreferenceTypeUsecase usecases.DietaryPreferenceTypeUsecase
+	authUsecase                  usecases.AuthUsecase
 
 	tokenUtil tokenutil.TokenUtil
 	v         *valutil.Validator
@@ -33,6 +34,7 @@ func NewAdminController(
 	foodTypeUsecase usecases.FoodTypeUsecase,
 	drinkTypeUsecase usecases.DrinkTypeUsecase,
 	dietaryPreferenceTypeUsecase usecases.DietaryPreferenceTypeUsecase,
+	authUsecase usecases.AuthUsecase,
 	tokenUtil tokenutil.TokenUtil,
 	v *valutil.Validator,
 ) *adminController {
@@ -41,6 +43,7 @@ func NewAdminController(
 		foodTypeUsecase:              foodTypeUsecase,
 		drinkTypeUsecase:             drinkTypeUsecase,
 		dietaryPreferenceTypeUsecase: dietaryPreferenceTypeUsecase,
+		authUsecase:                  authUsecase,
 		tokenUtil:                    tokenUtil,
 		v:                            v,
 	}
@@ -526,4 +529,26 @@ func (a *adminController) DeleteDietaryPreferenceType(c echo.Context) error {
 		msgconst.MsgDeleteDietaryPrefTypeSuccess,
 		nil,
 	)
+}
+
+// users
+func (a *adminController) GetAllUsersAuth(c echo.Context) error {
+	res, err := a.authUsecase.GetAllUsersAuth(c)
+	if err != nil {
+		var (
+			code int
+			msg  string = msgconst.MsgGetAllUsersFailed
+		)
+
+		switch {
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+		default:
+			code = http.StatusInternalServerError
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgGetAllUsersSuccess, res)
 }

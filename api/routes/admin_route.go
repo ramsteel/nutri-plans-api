@@ -18,6 +18,7 @@ func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	foodTypeRepository := repositories.NewFoodTypeRepository(db)
 	drinkTypeRepository := repositories.NewDrinkTypeRepository(db)
 	dietaryPreferenceTypeRepository := repositories.NewDietaryPreferenceTypeRepository(db)
+	authRepository := repositories.NewAuthRepository(db)
 
 	adminUsecase := usecases.NewAdminUsecase(adminRepository)
 	foodTypeUsecase := usecases.NewFoodTypeUsecase(foodTypeRepository)
@@ -25,6 +26,7 @@ func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	dietaryPreferenceTypeUsecase := usecases.NewDietaryPreferenceTypeUsecase(
 		dietaryPreferenceTypeRepository,
 	)
+	authUsecase := usecases.NewAuthUsecase(authRepository)
 
 	tokenUtil := tokenutil.NewTokenUtil()
 
@@ -33,6 +35,7 @@ func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 		foodTypeUsecase,
 		drinkTypeUsecase,
 		dietaryPreferenceTypeUsecase,
+		authUsecase,
 		tokenUtil,
 		v,
 	)
@@ -56,4 +59,7 @@ func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	g.POST("/dietary-preference-types", adminContoller.CreateDietaryPreferenceType)
 	g.PUT("/dietary-preference-types/:id", adminContoller.UpdateDietaryPreferenceType)
 	g.DELETE("/dietary-preference-types/:id", adminContoller.DeleteDietaryPreferenceType)
+
+	// users
+	g.GET("/users", adminContoller.GetAllUsersAuth)
 }
