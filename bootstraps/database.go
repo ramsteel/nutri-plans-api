@@ -77,6 +77,7 @@ func migrate(db *gorm.DB) {
 	db.AutoMigrate(&entities.MealType{})                                       // meal types
 	db.AutoMigrate(&entities.Meal{}, &entities.MealItem{})                     // meal and meal item
 	db.AutoMigrate(&entities.Recommendation{})                                 // recommendation
+	db.AutoMigrate(&entities.Admin{})                                          // admin
 }
 
 func seed(db *gorm.DB) {
@@ -104,22 +105,34 @@ func seedRoles(db *gorm.DB) {
 
 func seedFoodTypes(db *gorm.DB) {
 	foodTypes := seedutil.GetFoodTypes()
-	if err := db.Save(foodTypes).Error; err != nil {
-		log.Fatal(msgconst.MsgSeedFailed)
+
+	for _, foodType := range *foodTypes {
+		err := db.FirstOrCreate(&entities.FoodType{}, foodType).Error
+		if err != nil {
+			log.Fatal(msgconst.MsgSeedFailed)
+		}
 	}
 }
 
 func seedDrinkTypes(db *gorm.DB) {
 	drinkTypes := seedutil.GetDrinkTypes()
-	if err := db.Save(drinkTypes).Error; err != nil {
-		log.Fatal(msgconst.MsgSeedFailed)
+
+	for _, drinkType := range *drinkTypes {
+		err := db.FirstOrCreate(&entities.DrinkType{}, drinkType).Error
+		if err != nil {
+			log.Fatal(msgconst.MsgSeedFailed)
+		}
 	}
 }
 
 func seedDietaryPreferenceTypes(db *gorm.DB) {
 	dietaryPreferencesTypes := seedutil.GetDietaryPreferenceTypes()
-	if err := db.Save(dietaryPreferencesTypes).Error; err != nil {
-		log.Fatal(msgconst.MsgSeedFailed)
+
+	for _, dietaryPreferenceType := range *dietaryPreferencesTypes {
+		err := db.FirstOrCreate(&entities.DietaryPreferenceType{}, dietaryPreferenceType).Error
+		if err != nil {
+			log.Fatal(msgconst.MsgSeedFailed)
+		}
 	}
 }
 

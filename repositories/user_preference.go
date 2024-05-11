@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"nutri-plans-api/entities"
+	"nutri-plans-api/utils/structconv"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -45,9 +46,11 @@ func (u *userPreferenceRepository) UpdateUserPreference(
 		return err
 	}
 
+	mainTableMap := structconv.ToMap(*userPreference)
+
 	return u.db.Session(&gorm.Session{FullSaveAssociations: true}).
 		Updates(userPreference).
-		Save(userPreference).Error
+		Updates(mainTableMap).Error
 }
 
 func (u *userPreferenceRepository) GetUserPreference(

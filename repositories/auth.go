@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	roleconst "nutri-plans-api/constants/role"
 	"nutri-plans-api/entities"
 
 	"gorm.io/gorm"
@@ -10,6 +11,7 @@ import (
 type AuthRepository interface {
 	CreateAuth(ctx context.Context, auth *entities.Auth) error
 	GetAuthByEmail(ctx context.Context, email string) (*entities.Auth, error)
+	GetAllUsersAuths(ctx context.Context) (*[]entities.Auth, error)
 }
 
 type authRepository struct {
@@ -41,4 +43,21 @@ func (a *authRepository) GetAuthByEmail(ctx context.Context, email string) (*ent
 	}
 
 	return auth, nil
+}
+
+func (a *authRepository) GetAllUsersAuths(ctx context.Context) (*[]entities.Auth, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	auths := new([]entities.Auth)
+	err := a.db.Preload("RoleType").
+		Where("role_type_id = ?", roleconst.UserRoleID).
+		Find(auths).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return auths, nil
 }

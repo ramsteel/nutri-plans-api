@@ -32,6 +32,36 @@ func (_m *MockAuthRepository) CreateAuth(ctx context.Context, auth *entities.Aut
 	return r0
 }
 
+// GetAllUsersAuths provides a mock function with given fields: ctx
+func (_m *MockAuthRepository) GetAllUsersAuths(ctx context.Context) (*[]entities.Auth, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllUsersAuths")
+	}
+
+	var r0 *[]entities.Auth
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (*[]entities.Auth, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) *[]entities.Auth); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*[]entities.Auth)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAuthByEmail provides a mock function with given fields: ctx, email
 func (_m *MockAuthRepository) GetAuthByEmail(ctx context.Context, email string) (*entities.Auth, error) {
 	ret := _m.Called(ctx, email)

@@ -24,6 +24,7 @@ const (
 	MsgUnregisteredUser   = "unregistered user"
 	MsgGetUserFailed      = "failed to retreive user"
 	MsgUpdateUserFailed   = "failed to update user"
+	MsgGetAllUsersFailed  = "failed to get all users"
 
 	// user preference
 	MsgUpdatePreferenceFailed  = "failed to update preference"
@@ -40,13 +41,28 @@ const (
 	MsgGetCountriesFailed = "failed to get countries"
 
 	// food types
-	MsgGetFoodTypesFailed = "failed to get food types"
+	MsgGetFoodTypesFailed   = "failed to get food types"
+	MsgCreateFoodTypeFailed = "failed to create food type"
+	MsgFoodTypeExist        = "food type already exist"
+	MsgFoodTypeNotFound     = "food type not found"
+	MsgUpdateFoodTypeFailed = "failed to update food type"
+	MsgDeleteFoodTypeFailed = "failed to delete food type"
 
 	// drink types
-	MsgGetDrinkTypesFailed = "failed to get drink types"
+	MsgGetDrinkTypesFailed   = "failed to get drink types"
+	MsgCreateDrinkTypeFailed = "failed to create drink type"
+	MsgDrinkTypeExist        = "drink type already exist"
+	MsgDrinkTypeNotFound     = "drink type not found"
+	MsgUpdateDrinkTypeFailed = "failed to update drink type"
+	MsgDeleteDrinkTypeFailed = "failed to delete drink type"
 
 	// dietary preference types
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
+	MsgCreateDietaryPrefTypeFailed     = "failed to create dietary preference type"
+	MsgDietaryPrefTypeExist            = "dietary preference type already exist"
+	MsgDietaryPrefTypeNotFound         = "dietary preference type not found"
+	MsgUpdateDietaryPrefTypeFailed     = "failed to update dietary preference type"
+	MsgDeleteDietaryPrefTypeFailed     = "failed to delete dietary preference type"
 
 	// meal types
 	MsgGetMealTypesFailed = "failed to get meal types"
@@ -64,6 +80,10 @@ const (
 
 	// recommendation
 	MsgGetRecommendationFailed = "failed to get recommendation"
+
+	// admin
+	MsgAdminNotFound         = "admin not found"
+	MsgGetAdminProfileFailed = "failed to get admin profile"
 
 	// forbidden
 	MsgForbiddenResource = "forbidden resource"

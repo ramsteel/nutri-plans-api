@@ -16,16 +16,16 @@ type MockRecommendationRepository struct {
 	mock.Mock
 }
 
-// CreateRecommendation provides a mock function with given fields: ctx, recommendation
-func (_m *MockRecommendationRepository) CreateRecommendation(ctx context.Context, recommendation *entities.Recommendation) error {
+// CreateRecommendations provides a mock function with given fields: ctx, recommendation
+func (_m *MockRecommendationRepository) CreateRecommendations(ctx context.Context, recommendation *[]entities.Recommendation) error {
 	ret := _m.Called(ctx, recommendation)
 
 	if len(ret) == 0 {
-		panic("no return value specified for CreateRecommendation")
+		panic("no return value specified for CreateRecommendations")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entities.Recommendation) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *[]entities.Recommendation) error); ok {
 		r0 = rf(ctx, recommendation)
 	} else {
 		r0 = ret.Error(0)

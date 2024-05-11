@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	httpconst "nutri-plans-api/constants/http"
 	msgconst "nutri-plans-api/constants/message"
@@ -360,8 +359,6 @@ func (m *mealController) convertQueryParamsInput(
 			return 0, 0, nil, nil, err
 		}
 	}
-
-	fmt.Println(toDate)
 
 	return intPage, intLimit, fromDate, toDate, nil
 }

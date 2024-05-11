@@ -11,7 +11,6 @@ import (
 	dateutil "nutri-plans-api/utils/date"
 	errutil "nutri-plans-api/utils/error"
 	"strconv"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -145,13 +144,13 @@ func (m *mealUsecase) UpdateMeal(
 		return err
 	}
 
-	if todayMeal.UserID != uid {
-		return errutil.ErrForbiddenResource
-	}
-
 	mealItem, err := m.mealItemRepo.GetMealItemByID(ctx, id)
 	if err != nil {
 		return err
+	}
+
+	if todayMeal.ID != mealItem.MealID {
+		return errutil.ErrForbiddenResource
 	}
 
 	var (
@@ -207,11 +206,16 @@ func (m *mealUsecase) GetMealItemByID(
 		return nil, err
 	}
 
-	if todayMeal.UserID != uid {
+	mealItem, err := m.mealItemRepo.GetMealItemByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if todayMeal.ID != mealItem.MealID {
 		return nil, errutil.ErrForbiddenResource
 	}
 
-	return m.mealItemRepo.GetMealItemByID(ctx, id)
+	return mealItem, nil
 }
 
 func (m *mealUsecase) DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) error {
@@ -223,16 +227,16 @@ func (m *mealUsecase) DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) e
 		return err
 	}
 
-	if todayMeal.UserID != uid {
-		return errutil.ErrForbiddenResource
-	}
-
 	mealItem, deleteTx, err := m.mealItemRepo.DeleteMealItem(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	time.Sleep(2 * time.Second)
+	if todayMeal.ID != mealItem.MealID {
+		deleteTx.Rollback()
+		return errutil.ErrForbiddenResource
+	}
+
 	err = m.mealRepo.UpdateMeal(ctx, &entities.Meal{
 		ID:     todayMeal.ID,
 		UserID: uid,
