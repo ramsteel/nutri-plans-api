@@ -2,6 +2,8 @@ package usecases
 
 import (
 	"context"
+	"log"
+	msgconst "nutri-plans-api/constants/message"
 	"nutri-plans-api/dto"
 	exnutri "nutri-plans-api/externals/nutrition"
 	exoai "nutri-plans-api/externals/openai"
@@ -42,7 +44,9 @@ func NewRecommendationUsecase(
 
 func (r *recommendationUsecase) StartRecommendationCron() {
 	c := cron.New()
-	c.AddFunc("@weekly", r.fetchOpenAIRecommendation)
+	if err := c.AddFunc("@weekly", r.fetchOpenAIRecommendation); err != nil {
+		log.Fatal(msgconst.MsgFailedAddRecommendationCron)
+	}
 
 	go func() {
 		c.Start()
@@ -85,7 +89,9 @@ func (r *recommendationUsecase) fetchOpenAIRecommendation() {
 			prompt, recutil.ToString(pref.Recommendations, true))
 		if err == nil {
 			recommendations := recutil.ToStruct(res, pref.UserID)
-			r.recommendationRepo.CreateRecommendations(ctx, recommendations)
+			if err := r.recommendationRepo.CreateRecommendations(ctx, recommendations); err != nil {
+				log.Println(msgconst.MsgFailedCreateRecommendation)
+			}
 		}
 	}
 }

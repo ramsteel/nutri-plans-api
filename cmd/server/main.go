@@ -6,7 +6,6 @@ import (
 	logutil "nutri-plans-api/utils/logger"
 	valutil "nutri-plans-api/utils/validation"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
@@ -16,7 +15,6 @@ var db *gorm.DB
 var v *valutil.Validator
 
 func init() {
-	godotenv.Load()
 	db = bootstraps.NewDatabase()
 	v = valutil.NewValidator()
 }
