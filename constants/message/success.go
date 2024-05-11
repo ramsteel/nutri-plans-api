@@ -22,6 +22,9 @@ const (
 
 	// drink types
 	MsgRetrieveDrinkTypesSuccess = "drink types retreived successfully"
+	MsgCreateDrinkTypeSuccess    = "drink type created successfully"
+	MsgUpdateDrinkTypeSuccess    = "drink type updated successfully"
+	MsgDeleteDrinkTypeSuccess    = "drink type deleted successfully"
 
 	// dietary preference types
 	MsgRetrieveDietaryPreferenceTypesSuccess = "dietary preference types retreived successfully"

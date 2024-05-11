@@ -16,14 +16,17 @@ import (
 func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	adminRepository := repositories.NewAdminRepository(db)
 	foodTypeRepository := repositories.NewFoodTypeRepository(db)
+	drinkTypeRepository := repositories.NewDrinkTypeRepository(db)
 
 	adminUsecase := usecases.NewAdminUsecase(adminRepository)
 	foodTypeUsecase := usecases.NewFoodTypeUsecase(foodTypeRepository)
+	drinkTypeUsecase := usecases.NewDrinkTypeUsecase(drinkTypeRepository)
 	tokenUtil := tokenutil.NewTokenUtil()
 
 	adminContoller := controllers.NewAdminController(
 		adminUsecase,
 		foodTypeUsecase,
+		drinkTypeUsecase,
 		tokenUtil,
 		v,
 	)
@@ -37,4 +40,7 @@ func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	g.POST("/food-types", adminContoller.CreateFoodType)
 	g.PUT("/food-types/:id", adminContoller.UpdateFoodType)
 	g.DELETE("/food-types/:id", adminContoller.DeleteFoodType)
+
+	// drink types
+	g.POST("/drink-types", adminContoller.CreateDrinkType)
 }

@@ -48,7 +48,12 @@ const (
 	MsgDeleteFoodTypeFailed = "failed to delete food type"
 
 	// drink types
-	MsgGetDrinkTypesFailed = "failed to get drink types"
+	MsgGetDrinkTypesFailed   = "failed to get drink types"
+	MsgCreateDrinkTypeFailed = "failed to create drink type"
+	MsgDrinkTypeExist        = "drink type already exist"
+	MsgDrinkTypeNotFound     = "drink type not found"
+	MsgUpdateDrinkTypeFailed = "failed to update drink type"
+	MsgDeleteDrinkTypeFailed = "failed to delete drink type"
 
 	// dietary preference types
 	MsgGetDietaryPreferenceTypesFailed = "failed to get dietary preference types"
