@@ -6,6 +6,7 @@ const (
 	MsgLoginSuccess        = "login successfully"
 	MsgRetrieveUserSuccess = "user retreived successfully"
 	MsgUpdateUserSuccess   = "user updated successfully"
+	MsgGetAllUsersSuccess  = "all users retreived successfully"
 
 	// user preference
 	MsgPreferenceUpdated         = "preference updated successfully"

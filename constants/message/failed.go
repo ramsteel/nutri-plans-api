@@ -24,6 +24,7 @@ const (
 	MsgUnregisteredUser   = "unregistered user"
 	MsgGetUserFailed      = "failed to retreive user"
 	MsgUpdateUserFailed   = "failed to update user"
+	MsgGetAllUsersFailed  = "failed to get all users"
 
 	// user preference
 	MsgUpdatePreferenceFailed  = "failed to update preference"
