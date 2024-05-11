@@ -15,12 +15,26 @@ import (
 
 func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	adminRepository := repositories.NewAdminRepository(db)
+	foodTypeRepository := repositories.NewFoodTypeRepository(db)
+
 	adminUsecase := usecases.NewAdminUsecase(adminRepository)
+	foodTypeUsecase := usecases.NewFoodTypeUsecase(foodTypeRepository)
 	tokenUtil := tokenutil.NewTokenUtil()
 
-	adminContoller := controllers.NewAdminController(adminUsecase, tokenUtil, v)
+	adminContoller := controllers.NewAdminController(
+		adminUsecase,
+		foodTypeUsecase,
+		tokenUtil,
+		v,
+	)
 
 	g.Use(echojwt.WithConfig(tokenutil.GetJwtConfig()), middlewares.MustAdmin)
 
+	// profile
 	g.GET("", adminContoller.GetAdminProfile)
+
+	// food types
+	g.POST("/food-types", adminContoller.CreateFoodType)
+	g.PUT("/food-types/:id", adminContoller.UpdateFoodType)
+	g.DELETE("/food-types/:id", adminContoller.DeleteFoodType)
 }
