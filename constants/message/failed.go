@@ -40,7 +40,12 @@ const (
 	MsgGetCountriesFailed = "failed to get countries"
 
 	// food types
-	MsgGetFoodTypesFailed = "failed to get food types"
+	MsgGetFoodTypesFailed   = "failed to get food types"
+	MsgCreateFoodTypeFailed = "failed to create food type"
+	MsgFoodTypeExist        = "food type already exist"
+	MsgFoodTypeNotFound     = "food type not found"
+	MsgUpdateFoodTypeFailed = "failed to update food type"
+	MsgDeleteFoodTypeFailed = "failed to delete food type"
 
 	// drink types
 	MsgGetDrinkTypesFailed = "failed to get drink types"

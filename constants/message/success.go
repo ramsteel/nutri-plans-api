@@ -16,6 +16,9 @@ const (
 
 	// food types
 	MsgRetrieveFoodTypesSuccess = "food types retreived successfully"
+	MsgCreateFoodTypeSuccess    = "food type created successfully"
+	MsgUpdateFoodTypeSuccess    = "food type updated successfully"
+	MsgDeleteFoodTypeSuccess    = "food type deleted successfully"
 
 	// drink types
 	MsgRetrieveDrinkTypesSuccess = "drink types retreived successfully"
