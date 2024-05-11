@@ -53,4 +53,7 @@ func initAdminRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 	g.DELETE("/drink-types/:id", adminContoller.DeleteDrinkType)
 
 	// dietary preference type
+	g.POST("/dietary-preference-types", adminContoller.CreateDietaryPreferenceType)
+	g.PUT("/dietary-preference-types/:id", adminContoller.UpdateDietaryPreferenceType)
+	g.DELETE("/dietary-preference-types/:id", adminContoller.DeleteDietaryPreferenceType)
 }
