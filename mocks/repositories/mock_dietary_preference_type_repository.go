@@ -14,6 +14,42 @@ type MockDietaryPreferenceTypeRepository struct {
 	mock.Mock
 }
 
+// CreateDietaryPreferenceType provides a mock function with given fields: ctx, dietaryPreferenceType
+func (_m *MockDietaryPreferenceTypeRepository) CreateDietaryPreferenceType(ctx context.Context, dietaryPreferenceType *entities.DietaryPreferenceType) error {
+	ret := _m.Called(ctx, dietaryPreferenceType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateDietaryPreferenceType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.DietaryPreferenceType) error); ok {
+		r0 = rf(ctx, dietaryPreferenceType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteDietaryPreferenceType provides a mock function with given fields: ctx, id
+func (_m *MockDietaryPreferenceTypeRepository) DeleteDietaryPreferenceType(ctx context.Context, id uint) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteDietaryPreferenceType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetDietaryPreferenceTypes provides a mock function with given fields: ctx
 func (_m *MockDietaryPreferenceTypeRepository) GetDietaryPreferenceTypes(ctx context.Context) (*[]entities.DietaryPreferenceType, error) {
 	ret := _m.Called(ctx)
@@ -42,6 +78,24 @@ func (_m *MockDietaryPreferenceTypeRepository) GetDietaryPreferenceTypes(ctx con
 	}
 
 	return r0, r1
+}
+
+// UpdateDietaryPreferenceType provides a mock function with given fields: ctx, dietaryPreferenceType
+func (_m *MockDietaryPreferenceTypeRepository) UpdateDietaryPreferenceType(ctx context.Context, dietaryPreferenceType *entities.DietaryPreferenceType) error {
+	ret := _m.Called(ctx, dietaryPreferenceType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateDietaryPreferenceType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.DietaryPreferenceType) error); ok {
+		r0 = rf(ctx, dietaryPreferenceType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewMockDietaryPreferenceTypeRepository creates a new instance of MockDietaryPreferenceTypeRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
