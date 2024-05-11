@@ -140,8 +140,8 @@ func (u *userController) GetUserDetail(c echo.Context) error {
 	user, err := u.userUsecase.GetUserByID(c, claims.UID)
 	if err != nil {
 		var (
-			code int    = http.StatusInternalServerError
-			msg  string = msgconst.MsgGetUserFailed
+			code int
+			msg  string
 		)
 
 		switch {

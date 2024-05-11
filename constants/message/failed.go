@@ -15,6 +15,7 @@ const (
 	// database
 	MsgFailedConnectDB = "failed connect to database"
 	MsgSeedFailed      = "database seeding failed"
+	MsgFailedMigrateDB = "failed to migrate database"
 
 	// users
 	MsgUserCreationFailed = "failed to create user"
@@ -79,7 +80,9 @@ const (
 	MsgPageNotFound         = "page not found"
 
 	// recommendation
-	MsgGetRecommendationFailed = "failed to get recommendation"
+	MsgGetRecommendationFailed     = "failed to get recommendation"
+	MsgFailedAddRecommendationCron = "failed to add recommendation cron"
+	MsgFailedCreateRecommendation  = "failed to create recommendation"
 
 	// admin
 	MsgAdminNotFound         = "admin not found"

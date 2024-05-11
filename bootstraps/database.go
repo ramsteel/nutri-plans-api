@@ -66,18 +66,26 @@ func NewDatabase() *gorm.DB {
 }
 
 func migrate(db *gorm.DB) {
-	db.AutoMigrate(&entities.RoleType{}, &entities.Auth{}) // auth
-	db.AutoMigrate(&entities.Country{}, &entities.User{})  // user
-	db.AutoMigrate(
-		&entities.FoodType{},
-		&entities.DrinkType{},
-		&entities.DietaryPreferenceType{},
-	) // food, drink, and dietary preference
-	db.AutoMigrate(&entities.UserPreference{}, &entities.DietaryRestriction{}) // user preference
-	db.AutoMigrate(&entities.MealType{})                                       // meal types
-	db.AutoMigrate(&entities.Meal{}, &entities.MealItem{})                     // meal and meal item
-	db.AutoMigrate(&entities.Recommendation{})                                 // recommendation
-	db.AutoMigrate(&entities.Admin{})                                          // admin
+	err := db.AutoMigrate(
+		&entities.RoleType{},              // role types
+		&entities.Auth{},                  // auths
+		&entities.Country{},               // countries
+		&entities.User{},                  // users
+		&entities.FoodType{},              // food types
+		&entities.DrinkType{},             // drink types
+		&entities.DietaryPreferenceType{}, // dietary preference types
+		&entities.UserPreference{},        // user preference
+		&entities.DietaryRestriction{},    // dietary restriction
+		&entities.MealType{},              // meal types
+		&entities.Meal{},                  // meal
+		&entities.MealItem{},              // meal item
+		&entities.Recommendation{},        // recommendation
+		&entities.Admin{},                 // admin
+	)
+
+	if err != nil {
+		log.Fatal(msgconst.MsgFailedMigrateDB)
+	}
 }
 
 func seed(db *gorm.DB) {
