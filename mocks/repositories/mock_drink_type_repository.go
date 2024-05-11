@@ -14,6 +14,42 @@ type MockDrinkTypeRepository struct {
 	mock.Mock
 }
 
+// CreateDrinkType provides a mock function with given fields: ctx, drinkType
+func (_m *MockDrinkTypeRepository) CreateDrinkType(ctx context.Context, drinkType *entities.DrinkType) error {
+	ret := _m.Called(ctx, drinkType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateDrinkType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.DrinkType) error); ok {
+		r0 = rf(ctx, drinkType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteDrinkType provides a mock function with given fields: ctx, id
+func (_m *MockDrinkTypeRepository) DeleteDrinkType(ctx context.Context, id uint) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteDrinkType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uint) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetDrinkTypes provides a mock function with given fields: ctx
 func (_m *MockDrinkTypeRepository) GetDrinkTypes(ctx context.Context) (*[]entities.DrinkType, error) {
 	ret := _m.Called(ctx)
@@ -42,6 +78,24 @@ func (_m *MockDrinkTypeRepository) GetDrinkTypes(ctx context.Context) (*[]entiti
 	}
 
 	return r0, r1
+}
+
+// UpdateDrinkType provides a mock function with given fields: ctx, drinkType
+func (_m *MockDrinkTypeRepository) UpdateDrinkType(ctx context.Context, drinkType *entities.DrinkType) error {
+	ret := _m.Called(ctx, drinkType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateDrinkType")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entities.DrinkType) error); ok {
+		r0 = rf(ctx, drinkType)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewMockDrinkTypeRepository creates a new instance of MockDrinkTypeRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
