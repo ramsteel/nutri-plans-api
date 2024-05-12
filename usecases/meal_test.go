@@ -667,3 +667,23 @@ func TestGetUserMeals(t *testing.T) {
 		}
 	}
 }
+
+func TestGetMealByID(t *testing.T) {
+	uid := uuid.New()
+	id := uuid.New()
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/meals/220ac90e-6159-4202-addd-c923cd99e818", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	mockMealRepo := new(mockrepo.MockMealRepository)
+	mockMealRepo.On("GetMealByID", ctx, uid, id).Return(&entities.Meal{}, nil)
+
+	mealUsecase := usecases.NewMealUsecase(mockMealRepo, nil)
+
+	_, err := mealUsecase.GetMealByID(c, uid, id)
+	assert.NoError(t, err)
+}

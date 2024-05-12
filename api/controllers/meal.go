@@ -17,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -317,6 +318,45 @@ func (m *mealController) GetUserMeals(c echo.Context) error {
 		meta,
 		link,
 	)
+}
+
+func (m *mealController) GetMealByID(c echo.Context) error {
+	claims := m.tokenUtil.GetClaims(c)
+
+	id := c.Param("id")
+
+	mealID, err := uuid.Parse(id)
+	if err != nil {
+		return httputil.HandleErrorResponse(
+			c,
+			http.StatusBadRequest,
+			msgconst.MsgInvalidRequestData,
+		)
+	}
+
+	res, err := m.mealUsecase.GetMealByID(c, claims.UID, mealID)
+	if err != nil {
+		var (
+			code int
+			msg  string
+		)
+
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			code = http.StatusNotFound
+			msg = msgconst.MsgMealNotFound
+		case errors.Is(err, context.Canceled):
+			code = httpconst.StatusClientCancelledRequest
+			msg = msgconst.MsgGetMealsFailed
+		default:
+			code = http.StatusInternalServerError
+			msg = msgconst.MsgGetMealsFailed
+		}
+
+		return httputil.HandleErrorResponse(c, code, msg)
+	}
+
+	return httputil.HandleSuccessResponse(c, http.StatusOK, msgconst.MsgGetMealsSuccess, res)
 }
 
 func (m *mealController) convertQueryParamsInput(

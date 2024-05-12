@@ -21,6 +21,7 @@ type MealRepository interface {
 		uid uuid.UUID,
 		p *dto.PaginationRequest,
 	) (*[]entities.Meal, int64, error)
+	GetMealByID(ctx context.Context, uid uuid.UUID, id uuid.UUID) (*entities.Meal, error)
 }
 
 type mealRepository struct {
@@ -97,6 +98,27 @@ func (m *mealRepository) GetUserMeals(
 	}
 
 	return meals, res.RowsAffected, nil
+}
+
+func (m *mealRepository) GetMealByID(
+	ctx context.Context,
+	uid uuid.UUID,
+	id uuid.UUID,
+) (*entities.Meal, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	meal := new(entities.Meal)
+	err := m.db.Preload("MealItems.MealType").
+		Preload(clause.Associations).
+		Where("user_id = ? AND id = ?", uid, id).
+		First(meal).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return meal, nil
 }
 
 func (m *mealRepository) selectQuery(from, to *time.Time) *gorm.DB {

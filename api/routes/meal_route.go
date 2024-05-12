@@ -24,6 +24,7 @@ func initMealRoute(g *echo.Group, db *gorm.DB, v *valutil.Validator) {
 
 	g.GET("", mealController.GetUserMeals)
 	g.GET("/today", mealController.GetTodayMeal)
+	g.GET("/:id", mealController.GetMealByID)
 	g.POST("/items", mealController.AddItemToMeal)
 	g.PUT("/items/:id", mealController.UpdateMealItem)
 	g.GET("/items/:id", mealController.GetMealItemByID)

@@ -28,6 +28,7 @@ type MealUsecase interface {
 		uid uuid.UUID,
 		p *dto.PaginationRequest,
 	) (*[]entities.Meal, *dto.PaginationMetadata, *dto.Link, error)
+	GetMealByID(c echo.Context, uid uuid.UUID, id uuid.UUID) (*entities.Meal, error)
 }
 
 type mealUsecase struct {
@@ -257,6 +258,17 @@ func (m *mealUsecase) DeleteMealItem(c echo.Context, uid uuid.UUID, id uint64) e
 	deleteTx.Commit()
 
 	return nil
+}
+
+func (m *mealUsecase) GetMealByID(
+	c echo.Context,
+	uid uuid.UUID,
+	id uuid.UUID,
+) (*entities.Meal, error) {
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	return m.mealRepo.GetMealByID(ctx, uid, id)
 }
 
 func (m *mealUsecase) GetUserMeals(
