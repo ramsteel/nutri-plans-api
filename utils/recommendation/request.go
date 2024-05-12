@@ -19,6 +19,5 @@ func ToString(recommendations *[]entities.Recommendation, isCron bool) []string 
 			temp = ""
 		}
 	}
-	fmt.Println(res)
 	return res
 }

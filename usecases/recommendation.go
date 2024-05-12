@@ -44,7 +44,7 @@ func NewRecommendationUsecase(
 
 func (r *recommendationUsecase) StartRecommendationCron() {
 	c := cron.New()
-	if err := c.AddFunc("@weekly", r.fetchOpenAIRecommendation); err != nil {
+	if err := c.AddFunc("@weekly", r.FetchOpenAIRecommendation); err != nil {
 		log.Fatal(msgconst.MsgFailedAddRecommendationCron)
 	}
 
@@ -80,7 +80,7 @@ func (r *recommendationUsecase) GetRecommendation(
 	return itemNutritions, nil
 }
 
-func (r *recommendationUsecase) fetchOpenAIRecommendation() {
+func (r *recommendationUsecase) FetchOpenAIRecommendation() {
 	ctx := context.Background()
 	preferences, _ := r.userPrefRepo.GetAllUserPreferences(ctx)
 	for _, pref := range *preferences {
