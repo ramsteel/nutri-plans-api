@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"nutri-plans-api/dto"
 	"nutri-plans-api/entities"
 	mockrepo "nutri-plans-api/mocks/repositories"
 	"nutri-plans-api/usecases"
@@ -47,4 +48,74 @@ func TestGetDietaryPreferenceTypes(t *testing.T) {
 	dietaryPreferenceTypes, err := countryUsecase.GetDietaryPreferenceTypes(c)
 	assert.NoError(t, err)
 	assert.Equal(t, example, dietaryPreferenceTypes)
+}
+
+func TestUpdateDietaryPreferenceType(t *testing.T) {
+	id := uint(1)
+
+	r := &dto.DietaryPreferenceTypeRequest{
+		Name:        "vegan",
+		Description: "some description.",
+	}
+
+	d := &entities.DietaryPreferenceType{
+		ID:          id,
+		Name:        "vegan",
+		Description: "some description.",
+	}
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/dietary-preference-types/1", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	mockDietaryPreferenceTypeRepo := new(mockrepo.MockDietaryPreferenceTypeRepository)
+	mockDietaryPreferenceTypeRepo.On("UpdateDietaryPreferenceType", ctx, d).Return(nil)
+	dietaryPrefUsecase := usecases.NewDietaryPreferenceTypeUsecase(mockDietaryPreferenceTypeRepo)
+
+	err := dietaryPrefUsecase.UpdateDietaryPreferenceType(c, r, id)
+
+	assert.NoError(t, err)
+}
+
+func TestCreateDietaryPreferenceType(t *testing.T) {
+	r := &dto.DietaryPreferenceTypeRequest{
+		Name:        "vegan",
+		Description: "some description.",
+	}
+
+	d := &entities.DietaryPreferenceType{
+		Name:        "vegan",
+		Description: "some description.",
+	}
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/dietary-preference-types", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+
+	mockDietaryPreferenceTypeRepo := new(mockrepo.MockDietaryPreferenceTypeRepository)
+	mockDietaryPreferenceTypeRepo.On("CreateDietaryPreferenceType", ctx, d).Return(nil)
+
+	dietaryPrefUsecase := usecases.NewDietaryPreferenceTypeUsecase(mockDietaryPreferenceTypeRepo)
+	err := dietaryPrefUsecase.CreateDietaryPreferenceType(c, r)
+	assert.NoError(t, err)
+}
+
+func TestDeleteDietaryPreferenceType(t *testing.T) {
+	id := uint(1)
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodDelete, "/dietary-preference-types/1", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	ctx, cancel := context.WithCancel(c.Request().Context())
+	defer cancel()
+	mockDietaryPreferenceTypeRepo := new(mockrepo.MockDietaryPreferenceTypeRepository)
+	mockDietaryPreferenceTypeRepo.On("DeleteDietaryPreferenceType", ctx, id).Return(nil)
+	dietaryPrefUsecase := usecases.NewDietaryPreferenceTypeUsecase(mockDietaryPreferenceTypeRepo)
+	err := dietaryPrefUsecase.DeleteDietaryPreferenceType(c, id)
+	assert.NoError(t, err)
 }
