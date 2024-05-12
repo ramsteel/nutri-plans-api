@@ -38,6 +38,36 @@ func (_m *MockMealRepository) AddMeal(ctx context.Context, meal *entities.Meal) 
 	return r0
 }
 
+// GetMealByID provides a mock function with given fields: ctx, uid, id
+func (_m *MockMealRepository) GetMealByID(ctx context.Context, uid uuid.UUID, id uuid.UUID) (*entities.Meal, error) {
+	ret := _m.Called(ctx, uid, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetMealByID")
+	}
+
+	var r0 *entities.Meal
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, uuid.UUID) (*entities.Meal, error)); ok {
+		return rf(ctx, uid, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, uuid.UUID) *entities.Meal); ok {
+		r0 = rf(ctx, uid, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entities.Meal)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, uuid.UUID) error); ok {
+		r1 = rf(ctx, uid, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetTodayMeal provides a mock function with given fields: ctx, uid, start, end
 func (_m *MockMealRepository) GetTodayMeal(ctx context.Context, uid uuid.UUID, start time.Time, end time.Time) (*entities.Meal, error) {
 	ret := _m.Called(ctx, uid, start, end)
