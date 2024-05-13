@@ -47,7 +47,7 @@ func (r *recommendationController) GetRecommendation(c echo.Context) error {
 			msg = msgconst.MsgGetRecommendationFailed
 		case errors.Is(err, gorm.ErrRecordNotFound):
 			code = http.StatusNotFound
-			msg = msgconst.MsgUnregisteredUser
+			msg = msgconst.MsgRecommendationNotFound
 		case errors.Is(err, errutil.ErrExternalService):
 			code = http.StatusBadGateway
 			msg = msgconst.MsgExternalServiceError
