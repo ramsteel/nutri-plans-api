@@ -1,39 +1,921 @@
 openapi: '3.0.2'
 info:
   title: NutriPlans API
-  version: '0.0.0'
+  version: '1.0.0'
   description: |
     This API provides functionalities to manage and track your daily nutritional intake. This API also provides recommendations for healthy eating based on your preferences. To track the nutrition details of your food or drink, this API integrated with [Nutritionix API](https://www.nutritionix.com/business/api) service.
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/api/v1
     description: development server
 tags:
-  - name: users
+  - name: Users
     description: Authentication and user management
-  - name: food types
+  - name: Countries
+    description: Countries management
+  - name: Food Types
     description: Food types management
-  - name: drink types
+  - name: Drink Types
     description: Drink types management
-  - name: dietary preference types
+  - name: Dietary Preference Types
     description: Dietary preference types management
-  - name: preference
+  - name: Preference
     description: Preference management
-  - name: nutrition
+  - name: Nutrition
     description: Nutritions informations
+  - name: Meal Types
+    description: Meal types management
+  - name: Meals
+    description: Meal intake management
+  - name: Recommendation
+    description: Meal recommendation to users
+  - name: Admin
+    description: Admin level authority
 
 paths:
+  /admin:
+    get:
+      tags:
+        - Admin
+      summary: Get admin profile
+      description: Get admin profile
+      operationId: getAdminProfile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminProfileResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: admin profile not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: internal server error
+  /admin/users:
+    get:
+      tags:
+        - Admin
+        - Users
+      summary: Get all users
+      description: Get all users
+      operationId: getAllUsers
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/UsersResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: get all users failed
+  /admin/food-types:
+    post:
+      tags:
+        - Admin
+        - Food Types
+      summary: Create food type
+      description: Create food type
+      operationId: createFoodType
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/FoodTypeRequest'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: food type created successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: food type already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to create food type
+  /admin/food-types/{id}:
+    put:
+      tags:
+        - Admin
+        - Food Types
+      summary: Update food type
+      description: Update food type
+      operationId: updateFoodType
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the food type
+          example: 1
+      requestBody:
+        $ref: '#/components/requestBodies/FoodTypeRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: food type updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: food type not found
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: food type already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to update food type
+    delete:
+      tags:
+        - Admin
+        - Food Types
+      summary: Delete food type
+      description: Delete food type
+      operationId: deleteFoodType
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the food type
+          example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: food type deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: food type not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to delete food type
+  /admin/drink-types:
+    post:
+      tags:
+        - Admin
+        - Drink Types
+      summary: Create drink type
+      description: Create drink type
+      operationId: createDrinkType
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/DrinkTypeRequest'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: drink type created successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: drink type already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to create drink type
+  /admin/drink-types/{id}:
+    put:
+      tags:
+        - Admin
+        - Drink Types
+      summary: Update drink type
+      description: Update drink type
+      operationId: updateDrinkType
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the drink type
+          example: 1
+      requestBody:
+        $ref: '#/components/requestBodies/DrinkTypeRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: drink type updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: drink type not found
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: drink type already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to update drink type
+    delete:
+      tags:
+        - Admin
+        - Drink Types
+      summary: Delete drink type
+      description: Delete drink type
+      operationId: deleteDrinkType
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the drink type
+          example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: drink type deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: drink type not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to delete drink type
+  /admin/dietary-preference-types:
+    post:
+      tags:
+        - Admin
+        - Dietary Preference Types
+      summary: Create dietary preference type
+      description: Create dietary preference type
+      operationId: createDietaryPreferenceType
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/DietaryPreferenceTypeRequest'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: dietary preference type created successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: dietary preference type already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to create dietary preference type
+  /admin/dietary-preference-types/{id}:
+    put:
+      tags:
+        - Admin
+        - Dietary Preference Types
+      summary: Update dietary preference type
+      description: Update dietary preference type
+      operationId: updateDietaryPreferenceType
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the dietary preference type
+          example: 1
+      requestBody:
+        $ref: '#/components/requestBodies/DietaryPreferenceTypeRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: dietary preference type updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: dietary preference type not found
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: dietary preference type already exists
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to update dietary preference type
+    delete:
+      tags:
+        - Admin
+        - Dietary Preference Types
+      summary: Delete dietary preference type
+      description: Delete dietary preference type
+      operationId: deleteDietaryPreferenceType
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the dietary preference type
+          example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: dietary preference type deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: dietary preference type not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to delete dietary preference type
+  /recommendation:
+    get:
+      tags:
+        - Recommendation
+      summary: Get recommendation
+      description: Get recommendation
+      operationId: getRecommendation
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/RecommendationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: recommendation not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get recommendation
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /meals:
+    get:
+      tags:
+        - Meals
+      summary: Get all meals
+      description: Get all meals
+      operationId: getMeals
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          example: 10
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+          example: 2022-01-01
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+          example: 2022-01-31
+      responses:
+        '200':
+          $ref: '#/components/responses/MealHistoriesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: meals not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get all meals
+  /meals/today:
+    get:
+      tags:
+        - Meals
+      summary: Get today meal
+      description: Get today meal
+      operationId: getTodayMeal
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/MealResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: unregistered user
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get today meal
+  /meals/{id}:
+    get:
+      tags:
+        - Meals
+      summary: Get meal by id
+      description: Get meal by id
+      operationId: getMeal
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The id of the meal
+          example: 6fe0397e-b7a4-48d3-8637-d2c1dc7e8f00
+      responses:
+        '200':
+          $ref: '#/components/responses/MealResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: unregistered user
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get meal
+  /meals/items:
+    post:
+      tags:
+        - Meals
+      summary: Add meal items
+      description: Add meal items
+      operationId: addMealItems
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/MealItemsRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: meal items added successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to add meal items
+  /meals/items/{id}:
+    get:
+      tags:
+        - Meals
+      summary: Get meal items by id
+      description: Get meal items by id
+      operationId: getMealItemsByID
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the meal
+          example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/MealItemsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: unregistered user
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get meal items
+    put:
+      tags:
+        - Meals
+      summary: Update meal items
+      description: Update meal items
+      operationId: updateMealItems
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the meal
+          example: 1
+      requestBody:
+        $ref: '#/components/requestBodies/MealItemsRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: meal items updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: meal item not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to update meal items
+    delete:
+      tags:
+        - Meals
+      summary: Delete meal items
+      description: Delete meal items
+      operationId: deleteMealItems
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The id of the meal
+          example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: meal items deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: meal item not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to delete meal items
+  /meal-types:
+    get:
+      tags:
+        - Meal Types
+      summary: Get meal types
+      description: Get meal types
+      operationId: getMealTypes
+      responses:
+        '200':
+          $ref: '#/components/responses/MealTypesResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get meal types
   /register:
     post:
       tags:
-        - users
+        - Users
       summary: Register
       description: Register a new user
       operationId: register
       requestBody:
         $ref: '#/components/requestBodies/RegisterRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -76,10 +958,11 @@ paths:
                   value:
                     status: failed
                     message: failed hashing password
+
   /login:
     post:
       tags:
-        - users
+        - Users
       summary: Login
       description: Login a user
       operationId: login
@@ -133,10 +1016,106 @@ paths:
                   value:
                     status: failed
                     message: failed generating token
+
+  /profile:
+    get:
+      tags:
+        - Users
+      summary: Get user
+      description: Get user
+      operationId: getUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: unregistered user
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get user
+
+    put:
+      tags:
+        - Users
+      summary: Update user
+      description: Update user
+      operationId: updateUser
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateUserRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: success
+                message: user updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: country not found
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to update user
+  /countries:
+    get:
+      tags:
+        - Countries
+      summary: Get countries
+      description: Get countries
+      operationId: getCountries
+      responses:
+        '200':
+          $ref: '#/components/responses/CountriesResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+              example:
+                status: failed
+                message: failed to get countries
+
   /food-types:
     get:
       tags:
-        - food types
+        - Food Types
       summary: Get food types
       description: Get food types
       operationId: getFoodTypes
@@ -155,7 +1134,7 @@ paths:
   /drink-types:
     get:
       tags:
-        - drink types
+        - Drink Types
       summary: Get drink types
       description: Get drink types
       operationId: getDrinkTypes
@@ -174,7 +1153,7 @@ paths:
   /dietary-preference-types:
     get:
       tags:
-        - dietary preference types
+        - Dietary Preference Types
       summary: Get dietary preference types
       description: Get dietary preference types
       operationId: getDietaryPreferenceTypes
@@ -190,10 +1169,10 @@ paths:
               example:
                 status: failed
                 message: failed to get dietary preference types
-  /preferences:
+  /preference:
     get:
       tags:
-        - preferences
+        - Preference
       summary: Get user preference
       description: Get user preference
       operationId: getUserPreference
@@ -224,7 +1203,7 @@ paths:
                 message: failed to get user preference
     put:
       tags:
-        - preferences
+        - Preference
       summary: Update user preference
       description: Update user preference
       operationId: updateUserPreference
@@ -267,12 +1246,28 @@ paths:
   /nutrition/items/search:
     get:
       tags:
-        - nutrition
+        - Nutrition
       summary: Search items
       description: Search items
       operationId: searchItems
       security:
         - BearerAuth: []
+      parameters:
+        - in: query
+          name: item
+          schema:
+            type: string
+          example: app
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          example: 0
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          example: 10
       responses:
         '200':
           $ref: '#/components/responses/SearchItemsResponse'
@@ -292,7 +1287,7 @@ paths:
   /nutrition/{item-name}:
     get:
       tags:
-        - nutrition
+        - Nutrition
       summary: Get item nutritions
       description: Get item nutritions
       operationId: getItemNutrition
@@ -334,233 +1329,6 @@ paths:
 
 components:
   schemas:
-    Country:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the country
-        name:
-          type: string
-          description: The name of the country
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the country
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the country
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the country
-    RoleType:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the role type
-        name:
-          type: string
-          description: The name of the role type
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the role type
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the role type
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the role type
-    Auth:
-      type: object
-      properties:
-        id:
-          type: string
-          description: The ID of the auth (UUID)
-        email:
-          type: string
-          description: The email of the auth
-        password:
-          type: string
-          description: The password of the auth
-        username:
-          type: string
-          description: The username of the auth
-        role_type:
-          $ref: '#/components/schemas/RoleType'
-          description: The role type of the auth
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the auth
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the auth
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the auth
-    User:
-      type: object
-      properties:
-        auth:
-          $ref: '#/components/schemas/Auth'
-          description: The auth of the user
-        first_name:
-          type: string
-          description: The first name of the user
-        last_name:
-          type: string
-          description: The last name of the user
-        dob:
-          type: string
-          format: date
-          description: The date of birth of the user
-        gender:
-          type: string
-          enum:
-            - M
-            - F
-          description: The gender of the user
-        country:
-          $ref: '#/components/schemas/Country'
-          description: The country of the user
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the user
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the user
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the user
-    FoodType:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the food type
-        name:
-          type: string
-          description: The name of the food type
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the food type
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the food type
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the food type
-    DrinkType:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the drink type
-        name:
-          type: string
-          description: The name of the drink type
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the drink type
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the drink type
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the drink type
-    DietaryPreferenceType:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the dietary restriction type
-        name:
-          type: string
-          description: The name of the dietary restriction type
-        description:
-          type: string
-          description: The description of the dietary restriction type
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the dietary restriction type
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the fdietary restrictionodietary restrictionod type
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the dietary restriction type
-    DietaryRestriction:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The ID of the dietary restriction
-        name:
-          type: string
-          description: The name of the dietary restriction
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the dietary restriction
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the dietary restriction
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the dietary restriction
-    UserPreference:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/User'
-          description: The user of the user preference
-        food_type:
-          $ref: '#/components/schemas/FoodType'
-          description: The food type of the user preference
-        drink_type:
-          $ref: '#/components/schemas/DrinkType'
-          description: The drink type of the user preference
-        dietary_preference_type:
-          $ref: '#/components/schemas/DietaryPreferenceType'
-          description: The dietary preference type of the user preference
-        dietary_restrictions:
-          type: array
-          items:
-            $ref: '#/components/schemas/DietaryRestriction'
-        created_at:
-          type: string
-          format: date-time
-          description: The created at of the user preference
-        updated_at:
-          type: string
-          format: date-time
-          description: The updated at of the user preference
-        deleted_at:
-          type: string
-          format: date-time
-          description: The deleted at of the user preference
     SearchResponse:
       type: object
       properties:
@@ -589,6 +1357,41 @@ components:
             has_load_more:
               type: boolean
               description: The has load more of the response
+    PaginationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the response
+        message:
+          type: string
+          description: The message of the response
+        data:
+          type: object
+          description: The data of the response
+        pagination:
+          type: object
+          description: The pagination of the response
+          properties:
+            current_page:
+              type: integer
+              description: The current page of the response
+            total_page:
+              type: integer
+              description: The total page of the response
+            total_data:
+              type: integer
+              description: The total data of the response
+        link:
+          type: object
+          description: The link of the response
+          properties:
+            next:
+              type: string
+              description: The next link response
+            prev:
+              type: string
+              description: The prev link response
     BaseResponse:
       type: object
       properties:
@@ -614,28 +1417,28 @@ components:
               email:
                 type: string
                 description: The email of the user
-                example: test@example.com
+                example: youremail@example.com
               password:
                 type: string
                 description: The password of the user
-                example: password
+                example: yourpassword
               username:
                 type: string
                 description: The username of the user
-                example: testuser
+                example: username
               first_name:
                 type: string
                 description: The first name of the user
-                example: John
+                example: firstname
               last_name:
                 type: string
                 description: The last name of the user
-                example: Doe
+                example: lastname
               dob:
                 type: string
                 format: date-time
                 description: The date of birth of the user
-                example: 2001-01-01T00:00:00Z
+                example: '2003-05-01T00:00:00Z'
               gender:
                 type: string
                 enum:
@@ -647,6 +1450,44 @@ components:
                 type: integer
                 description: The ID of the country
                 example: 1
+    UpdateUserRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                description: The email of the user
+                example: updatedemail@example.com
+              username:
+                type: string
+                description: The username of the user
+                example: updatedusername
+              first_name:
+                type: string
+                description: The first name of the user
+                example: updatedfirstname
+              last_name:
+                type: string
+                description: The last name of the user
+                example: updatedlastname
+              dob:
+                type: string
+                format: date-time
+                description: The date of birth of the user
+                example: 2003-05-01T00:00:00Z
+              gender:
+                type: string
+                enum:
+                  - M
+                  - F
+                description: The gender of the user
+                example: M
+              country_id:
+                type: integer
+                description: The ID of the country
+                example: 10
     LoginRequest:
       content:
         application/json:
@@ -656,11 +1497,11 @@ components:
               email:
                 type: string
                 description: The email of the user
-                example: test@example.com
+                example: youremail@example.com
               password:
                 type: string
                 description: The password of the user
-                example: password
+                example: yourpassword
     PreferenceRequest:
       content:
         application/json:
@@ -687,6 +1528,75 @@ components:
                 example:
                   - egg
                   - beef
+    MealItemsRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meal_type_id:
+                type: integer
+                example: 1
+              item_name:
+                type: string
+                example: apple
+              qty:
+                type: integer
+                example: 1
+              unit:
+                type: string
+                example: medium (3" dia)
+              weight:
+                type: number
+                example: 182
+              calories:
+                type: number
+                example: 94.64
+              carbohydrate:
+                type: number
+                example: 25.13
+              protein:
+                type: number
+                example: 0.47
+              fat:
+                type: number
+                example: 0
+              cholesterol:
+                type: number
+                example: 0
+              sugars:
+                type: number
+                example: 18.91
+    FoodTypeRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: roasted
+    DrinkTypeRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: smoothies
+    DietaryPreferenceTypeRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: vegan
+              description:
+                type: string
+                example: some description
   responses:
     BadRequest:
       description: Bad Request
@@ -718,6 +1628,15 @@ components:
               value:
                 status: failed
                 message: unauthorized user
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: failed
+            message: forbidden resource
     BadGateway:
       description: Bad Gateway
       content:
@@ -878,6 +1797,269 @@ components:
               nf_total_carbohydrate: 25.13
               nf_sugars: 18.91
               nf_protein: 0.47
+    UserResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: user retreived successfully
+            data:
+              auth:
+                email: test@gmail.com
+                username: username
+                role_type:
+                  name: user
+                created_at: '2024-05-05T17:57:21.144071+08:00'
+                updated_at: '2024-05-05T17:57:21.144071+08:00'
+              first_name: firstname
+              last_name: lastname
+              dob: '2003-05-01T00:00:00Z'
+              gender: M
+              country:
+                id: 1
+                name: afghanistan
+              created_at: '2024-05-05T17:57:21.148461+08:00'
+              updated_at: '2024-05-05T17:57:21.148461+08:00'
+    CountriesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: countries retreived successfully
+            data:
+              - id: 1
+                name: afghanistan
+              - id: 2
+                name: albania
+    MealTypesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: meal types retreived successfully
+            data:
+              - id: 1
+                name: breakfast
+              - id: 2
+                name: lunch
+              - id: 3
+                name: dinner
+              - id: 4
+                name: additional
+    MealResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: today meal retreived successfully
+            data:
+              id: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+              total_calories: 378.56
+              total_carbohydrate: 100.52
+              total_protein: 1.88
+              total_fat: 1
+              total_cholesterol: 1
+              total_sugars: 75.64
+              meal_items:
+                - id: 1
+                  meal_type:
+                    id: 1
+                    name: breakfast
+                  item_name: apple
+                  qty: 1
+                  unit: medium (3" dia)
+                  weight: 182
+                  calories: 94.64
+                  carbohydrate: 25.13
+                  protein: 0.47
+                  fat: 1
+                  cholesterol: 1
+                  sugars: 18.91
+                  created_at: '2024-05-09T11:42:30.430872+08:00'
+                  updated_at: '2024-05-09T11:46:54.706276+08:00'
+    MealHistoriesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginationResponse'
+          example:
+            status: success
+            message: meal history retreived successfully
+            data:
+              - id: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+                total_calories: 378.56
+                total_carbohydrate: 100.52
+                total_protein: 1.88
+                total_fat: 1
+                total_cholesterol: 1
+                total_sugars: 75.64
+                meal_items:
+                  - id: 1
+                    meal_type:
+                      id: 1
+                      name: breakfast
+                    item_name: apple
+                    qty: 1
+                    unit: medium (3" dia)
+                    weight: 182
+                    calories: 94.64
+                    carbohydrate: 25.13
+                    protein: 0.47
+                    fat: 1
+                    cholesterol: 1
+                    sugars: 18.91
+                    created_at: '2024-05-09T11:42:30.430872+08:00'
+                    updated_at: '2024-05-09T11:46:54.706276+08:00'
+            pagination:
+              current_page: 1
+              total_page: 1
+              total_data: 5
+    MealItemsResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: meal items retreived successfully
+            data:
+              id: 1
+              meal_type:
+                id: 1
+                name: breakfast
+              item_name: apple
+              qty: 1
+              unit: medium (3" dia)
+              weight: 182
+              calories: 94.64
+              carbohydrate: 25.13
+              protein: 0.47
+              fat: 1
+              cholesterol: 1
+              sugars: 18.91
+              created_at: '2024-05-09T11:42:30.430872+08:00'
+              updated_at: '2024-05-09T11:46:54.706276+08:00'
+    RecommendationResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: recommendation retreived successfully
+            data:
+              - food_name: apple
+                serving_qty: 1
+                serving_unit: unit
+                serving_weight_grams: 123
+                alt_measures:
+                  - serving_weight: 123
+                    measure: measure 1
+                    qty: 1
+                  - serving_weight: 234
+                    measure: measure 2
+                    qty: 1
+                  - serving_weight: 345
+                    measure: measure 3
+                    qty: 1
+                  - serving_weight: 456
+                    measure: measure 4
+                    qty: 1
+                  - serving_weight: 567
+                    measure: measure 5
+                    qty: 1
+                  - serving_weight: 678
+                    measure: measure 6
+                    qty: 1
+                photo:
+                  thumb: photo_url
+                nf_calories: 94.64
+                nf_fat: 0
+                nf_cholesterol: 0
+                nf_total_carbohydrate: 25.13
+                nf_sugars: 18.91
+                nf_protein: 0.47
+              - food_name: black bean salad
+                serving_qty: 1
+                serving_unit: cup
+                serving_weight_grams: 245.56
+                alt_measures:
+                  - serving_weight: 245.56
+                    measure: cup
+                    qty: 1
+                  - serving_weight: 100
+                    measure: g
+                    qty: 100
+                  - serving_weight: 28.3495
+                    measure: wt. oz
+                    qty: 1
+                  - serving_weight: 5.12
+                    measure: tsp
+                    qty: 1
+                  - serving_weight: 15.35
+                    measure: tbsp
+                    qty: 1
+                photo:
+                  thumb: photo url
+                nf_calories: 210.04
+                nf_fat: 0
+                nf_cholesterol: 0
+                nf_total_carbohydrate: 37.13
+                nf_sugars: 5.12
+                nf_protein: 8.78
+    AdminProfileResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: admin profile retreived successfully
+            data:
+              id: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+              name: admin
+              email: 1v9pQ@example.com
+              username: admin
+              created_at: '2024-05-09T11:42:30.430872+08:00'
+              updated_at: '2024-05-09T11:46:54.706276+08:00'
+    UsersResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+          example:
+            status: success
+            message: users retreived successfully
+            data:
+              - id: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+                name: user1
+                email: 1v9pQ@example.com
+                username: user1
+                created_at: '2024-05-09T11:42:30.430872+08:00'
+                updated_at: '2024-05-09T11:46:54.706276+08:00'
+              - id: a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12
+                name: user2
+                email: sdam1@example.com
+                username: user2
+                created_at: '2024-05-09T11:42:30.430872+08:00'
+                updated_at: '2024-05-09T11:46:54.706276+08:00'
   securitySchemes:
     BearerAuth:
       type: http
