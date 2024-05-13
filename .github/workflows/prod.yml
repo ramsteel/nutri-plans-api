@@ -45,10 +45,6 @@ jobs:
       - name: Revise task definition
         id: task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
-        env:
-          DB_SSL: ${{ vars.DB_SSL }}
-          DB_TZ: ${{ vars.DB_TZ }}
-          DB_LOG_LEVEL: ${{ vars.DB_LOG_LEVEL }}
         with:
           container-name: ${{ vars.CONTAINER_NAME }}
           image: ${{ steps.build.outputs.image }}
@@ -58,9 +54,9 @@ jobs:
             DB_PORT=${{ secrets.DB_PORT }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_SSL=$DB_SSL
-            DB_TZ=$DB_TZ
-            DB_LOG_LEVEL=$DB_LOG_LEVEL
+            DB_SSL=${{ vars.DB_SSL }}
+            DB_TZ=${{ vars.DB_TZ }}
+            DB_LOG_LEVEL=${{ vars.DB_LOG_LEVEL }}
             JWT_KEY=${{ secrets.JWT_KEY }}
             NUTRITIONIX_APP_ID=${{ secrets.NUTRITIONIX_APP_ID }}
             NUTRITIONIX_APP_KEY=${{ secrets.NUTRITIONIX_APP_KEY }}
