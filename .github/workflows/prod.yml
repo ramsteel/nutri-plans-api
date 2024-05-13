@@ -1,7 +1,7 @@
 name: Production CI/CD
 
 on:
-  push:
+  pull_request:
     branches: [main]
 
 permissions:
@@ -36,6 +36,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -44,6 +45,10 @@ jobs:
       - name: Revise task definition
         id: task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
+        env:
+          DB_SSL: ${{ vars.DB_SSL }}
+          DB_TZ: ${{ vars.DB_TZ }}
+          DB_LOG_LEVEL: ${{ vars.DB_LOG_LEVEL }}
         with:
           container-name: ${{ vars.CONTAINER_NAME }}
           image: ${{ steps.build.outputs.image }}
