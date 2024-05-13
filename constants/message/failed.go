@@ -83,6 +83,7 @@ const (
 	MsgGetRecommendationFailed     = "failed to get recommendation"
 	MsgFailedAddRecommendationCron = "failed to add recommendation cron"
 	MsgFailedCreateRecommendation  = "failed to create recommendation"
+	MsgRecommendationNotFound      = "recommendation not found"
 
 	// admin
 	MsgAdminNotFound         = "admin not found"

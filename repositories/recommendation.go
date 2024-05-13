@@ -33,12 +33,16 @@ func (r *recommendationRepository) GetRecommendations(
 	}
 
 	recommendations := new([]entities.Recommendation)
-	err := r.db.Order("id desc").
+	res := r.db.Order("id desc").
 		Limit(recconst.RecommendationLimit).
 		Where("user_preference_id = ?", uid).
-		Find(recommendations).Error
-	if err != nil {
-		return nil, err
+		Find(recommendations)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	if res.RowsAffected == 0 {
+		return nil, gorm.ErrRecordNotFound
 	}
 
 	return recommendations, nil

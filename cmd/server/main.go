@@ -25,6 +25,11 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.LoggerWithConfig(*logutil.GetLoggerConfig()))
 
+	e.Static("/", "static")
+	e.GET("/openapi.yml", func(c echo.Context) error {
+		return c.File("./docs/openapi.yml")
+	})
+
 	routes.Init(e, db, v)
 
 	e.Logger.Fatal(e.Start(":8080"))
