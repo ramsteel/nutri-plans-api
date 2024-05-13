@@ -1,0 +1,11 @@
+comment:
+  layout: 'condensed_header, condensed_files, condensed_footer'
+  hide_project_coverage: false
+coverage:
+  status:
+    project:
+      default:
+        target: 90%
+        base: auto
+        paths:
+          - './usecases'
