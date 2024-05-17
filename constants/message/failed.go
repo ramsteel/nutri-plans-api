@@ -11,6 +11,7 @@ const (
 	// request
 	MsgMismatchedDataType = "mismatched data type"
 	MsgInvalidRequestData = "invalid request data"
+	MsgTooManyRequest     = "too many request sent"
 
 	// database
 	MsgFailedConnectDB = "failed connect to database"
