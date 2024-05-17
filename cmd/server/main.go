@@ -26,7 +26,6 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middleware.LoggerWithConfig(*logutil.GetLoggerConfig()))
 	e.Use(middleware.RateLimiterWithConfig(*rateutil.GetRateLimiterConfig()))
-	e.Use(middleware.HTTPSRedirect())
 
 	e.Static("/", "static")
 	e.GET("/openapi.yml", func(c echo.Context) error {
