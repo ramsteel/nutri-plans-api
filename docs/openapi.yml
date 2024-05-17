@@ -4,9 +4,11 @@ info:
   version: '1.0.0'
   description: |
     This API provides functionalities to manage and track your daily nutritional intake. This API also provides recommendations for healthy eating based on your preferences. To track the nutrition details of your food or drink, this API integrated with [Nutritionix API](https://www.nutritionix.com/business/api) service.
+
+    ***Note: The API request is limited for Billing Purposes :)***
 servers:
   - url: http://nutri-plans-api.steel.my.id/api/v1
-    description: development server
+    description: production server
   - url: http://localhost:8080/api/v1
     description: development server
 tags:
