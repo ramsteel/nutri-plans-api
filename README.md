@@ -40,7 +40,7 @@
 - [Codecov](https://about.codecov.io/)
 
 ## API Documentation
-[NutriPlans API](http://nutri-plans-api.steel.my.id/)
+[NutriPlans API](https://nutri-plans-api.steel.my.id/)
 
 ## ERD
 ![ERD](./static/assets/NutriPlans-ERD.png)
@@ -48,7 +48,6 @@
 ## Setup 
 
 ### Prerequisites
-- Golang
 - Docker
 - Docker compose
 - Make
