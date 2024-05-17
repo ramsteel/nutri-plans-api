@@ -4,6 +4,7 @@ import (
 	"nutri-plans-api/api/routes"
 	"nutri-plans-api/bootstraps"
 	logutil "nutri-plans-api/utils/logger"
+	rateutil "nutri-plans-api/utils/rate"
 	valutil "nutri-plans-api/utils/validation"
 
 	"github.com/labstack/echo/v4"
@@ -24,6 +25,8 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 	e.Use(middleware.LoggerWithConfig(*logutil.GetLoggerConfig()))
+	e.Use(middleware.RateLimiterWithConfig(*rateutil.GetRateLimiterConfig()))
+	e.Use(middleware.HTTPSRedirect())
 
 	e.Static("/", "static")
 	e.GET("/openapi.yml", func(c echo.Context) error {
