@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/time/rate"
 )
 
 func GetRateLimiterConfig() *middleware.RateLimiterConfig {
@@ -16,13 +17,13 @@ func GetRateLimiterConfig() *middleware.RateLimiterConfig {
 		Skipper: middleware.DefaultSkipper,
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
 			middleware.RateLimiterMemoryStoreConfig{
-				Rate:      10,
-				Burst:     30,
-				ExpiresIn: 6 * time.Hour,
+				Rate:      rate.Limit(2) / 3600,
+				Burst:     12,
+				ExpiresIn: 3 * time.Minute,
 			},
 		),
 		IdentifierExtractor: func(c echo.Context) (string, error) {
-			id := c.RealIP()
+			id := c.Request().Header.Get("X-Forwarded-For")
 			return id, nil
 		},
 		ErrorHandler: func(c echo.Context, err error) error {
